@@ -30,6 +30,7 @@
 html{background:var(--bg);overflow-x:hidden;}
 body{background:var(--bg);color:var(--cream);font-family:'DM Sans',sans-serif;
   overflow-x:hidden;-webkit-font-smoothing:antialiased;cursor:none;}
+body.no-js{cursor:auto;}
 
 /* ══ CURSOR ════════════════════════════════════════════════ */
 #cur{position:fixed;z-index:99999;pointer-events:none;
@@ -745,6 +746,7 @@ footer{padding:60px 52px 36px;border-top:.5px solid var(--border);}
 <!-- ══════════════════ JS ════════════════════════════════════ -->
 <script>
 document.addEventListener('DOMContentLoaded', function(){
+  document.body.style.cursor='none';
 
   /* ── LENIS ─────────────────────────────────────────── */
   const lenis = new Lenis({ duration:1.15, easing: t=>Math.min(1,1.001-Math.pow(2,-10*t)) });
