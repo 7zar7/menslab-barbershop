@@ -252,10 +252,7 @@ footer{padding:52px 52px 32px;border-top:.5px solid var(--border);}
   .b-name{font-size:clamp(32px,9vw,48px);}
 }
 
-/* Mobile fallback */
-@media(max-width:768px){
-  #split-text{padding:0 20px 56px;}
-}
+/* ══ STAGGER DELAYS ════════════════════════════════════ */
 .d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}
 .d4{transition-delay:.4s;}.d5{transition-delay:.5s;}.d6{transition-delay:.6s;}
 </style>
@@ -621,188 +618,567 @@ footer{padding:52px 52px 32px;border-top:.5px solid var(--border);}
   <div class="fb2"><div class="fc2">2025 Men's Lab BCN. All rights reserved.</div><div class="fl2">EN . ES . PT</div></div>
 </footer>
 <script>
-document.addEventListener('DOMContentLoaded',function(){
-  const lenis=new Lenis({duration:1.15,easing:t=>Math.min(1,1.001-Math.pow(2,-10*t))});
-  gsap.registerPlugin(ScrollTrigger);
-  gsap.ticker.add(t=>lenis.raf(t*1000));
-  gsap.ticker.lagSmoothing(0);
-  ScrollTrigger.scrollerProxy(document.documentElement,{
-    scrollTop(v){if(arguments.length)lenis.scrollTo(v,{immediate:true});return lenis.animatedScroll;},
-    getBoundingClientRect(){return{top:0,left:0,width:window.innerWidth,height:window.innerHeight};}
-  });
-  lenis.on('scroll',ScrollTrigger.update);
-  ScrollTrigger.addEventListener('refresh',()=>lenis.resize());
-  window.addEventListener('load',()=>ScrollTrigger.refresh());
-  const MI=['Precision Grooming','C/ Londres 67','Barcelona','Est. 2019','Eixample','Master Barbers','Premium Grooming','Precision Grooming','C/ Londres 67','Barcelona','Est. 2019','Eixample','Master Barbers','Premium Grooming'];
-  const mt=document.getElementById('mtrack');
-  MI.forEach(i=>{const s=document.createElement('span');s.className='m-item';s.innerHTML='<span class="m-dot">*</span>'+i;mt.appendChild(s);});
-  if(window.matchMedia('(pointer:fine)').matches){
-    const cur=document.getElementById('cur'),ring=document.getElementById('cur-r');
-    let mx=0,my=0,rx=0,ry=0;
-    document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
-    (function tick(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;cur.style.cssText='left:'+mx+'px;top:'+my+'px;';ring.style.cssText='left:'+rx+'px;top:'+ry+'px;';requestAnimationFrame(tick);})();
-    document.querySelectorAll('a,button,.svc-row,.prf-card,.rui-attr').forEach(el=>{
-      el.addEventListener('mouseenter',()=>document.body.classList.add('hov'));
-      el.addEventListener('mouseleave',()=>document.body.classList.remove('hov'));
-    });
-  }
-  gsap.to('#nav',{opacity:1,y:0,duration:.9,delay:.1,ease:'power2.out'});
+gsap.registerPlugin(ScrollTrigger);
 
-  const hv=document.getElementById('herovid');
-  if(hv)hv.play().catch(()=>{});
+// ═══════════════════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════════════════
+gsap.set('#nav',{opacity:0,y:-14});
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('solid',window.scrollY>40);
+},{passive:true});
 
-  gsap.fromTo('.hero-vid-tag',{opacity:0,y:20},{opacity:1,y:0,duration:.8,delay:.3,ease:'power3.out'});
-  gsap.fromTo('.hero-vid-h1',{opacity:0,y:50,skewY:2},{opacity:1,y:0,skewY:0,duration:1,delay:.5,ease:'power4.out'});
-  gsap.fromTo('.hero-vid-p', {opacity:0,y:20},{opacity:1,y:0,duration:.75,delay:.8,ease:'power3.out'});
-  gsap.fromTo('.hero-vid-btns',{opacity:0,y:16},{opacity:1,y:0,duration:.7,delay:1.0,ease:'power3.out'});
+// ═══════════════════════════════════════════════════════
+// VIDEO — force play on Safari
+// ═══════════════════════════════════════════════════════
+function startVideo(){
+  const v=document.getElementById('herovid');
+  if(!v) return;
+  v.muted=true;
+  v.play().catch(()=>{});
+}
+document.addEventListener('DOMContentLoaded', startVideo);
+window.addEventListener('load', startVideo);
+document.addEventListener('touchstart', startVideo, {once:true, passive:true});
 
-  lenis.on('scroll',({scroll})=>document.getElementById('nav').classList.toggle('solid',scroll>40));
-
-  // Barber photo fallback
-  const bImg=document.querySelector('#bPhoto img');
-  if(bImg){
-    const paths=['./fhelipe.png','./photos/fhelipe.png','./fhelipe.jpg','./photos/fhelipe.jpg'];
-    let idx=0;
-    bImg.onerror=function(){idx++;if(idx<paths.length){bImg.src=paths[idx];}};
-    bImg.src=paths[0];
-  }
-
-  // Razor SVG — scale + fade in on scroll
-  const rw=document.getElementById('straight-razor-wrap');
-  if(rw){
-    rw.addEventListener('click',()=>rw.classList.add('open'));
-    gsap.fromTo('#straight-razor-svg',
-      {opacity:0,scale:.88,transformOrigin:'center center'},
-      {opacity:1,scale:1,duration:1.2,ease:'power3.out',
-       scrollTrigger:{trigger:rw,start:'top 72%',once:true}});
-    ScrollTrigger.create({trigger:rw,start:'top 60%',once:true,
-      onEnter(){rw.classList.add('open');}});
-  }
-
-  // Barber parallax
-  gsap.to('#bPhoto img',{yPercent:10,ease:'none',
-    scrollTrigger:{trigger:'#barber',start:'top bottom',end:'bottom top',scrub:1.5}});
-
-  // ── GSAP ScrollTrigger reveals ────────────────────────
-  // Clip reveals (headings)
-  document.querySelectorAll('.gc,.reveal-clip').forEach(el=>{
-    gsap.fromTo(el,
-      {clipPath:'inset(0 100% 0 0)'},
-      {clipPath:'inset(0 0% 0 0)',duration:1.1,ease:'power3.out',
-       scrollTrigger:{trigger:el,start:'top 88%',once:true}});
-  });
-
-  // Fade-up reveals
-  document.querySelectorAll('.g0').forEach(el=>{
-    const d=parseFloat(getComputedStyle(el).getPropertyValue('--d')||'0');
-    gsap.fromTo(el,
-      {opacity:0,y:36},
-      {opacity:1,y:0,duration:.85,ease:'power3.out',delay:d,
-       scrollTrigger:{trigger:el,start:'top 88%',once:true}});
-  });
-
-  // Slide-left reveals
-  document.querySelectorAll('.g0l').forEach(el=>{
-    const d=parseFloat(getComputedStyle(el).getPropertyValue('--d')||'0');
-    gsap.fromTo(el,
-      {opacity:0,x:-28},
-      {opacity:1,x:0,duration:.8,ease:'power3.out',delay:d,
-       scrollTrigger:{trigger:el,start:'top 90%',once:true}});
-  });
-
-  // CSS-class-based reveal (Intersection Observer for .reveal-* classes)
-  const revealObs=new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');revealObs.unobserve(e.target);}});
-  },{threshold:.12,rootMargin:'0px 0px -40px 0px'});
-  document.querySelectorAll('.reveal-up,.reveal-left,.reveal-right,.reveal-scale,.reveal-clip:not(.gc)').forEach(el=>revealObs.observe(el));
-
-  // Razor attr buttons stagger
-  document.querySelectorAll('.rui-attr').forEach((el,i)=>{
-    gsap.fromTo(el,
-      {opacity:0,y:22,x:-10},
-      {opacity:1,y:0,x:0,duration:.65,ease:'power3.out',
-       scrollTrigger:{trigger:el,start:'top 90%',once:true},delay:i*.08});
-  });
-
-  // rui-book-btn
-  gsap.fromTo('.rui-book-btn',
-    {opacity:0,y:20},
-    {opacity:1,y:0,duration:.7,ease:'power3.out',
-     scrollTrigger:{trigger:'.rui-book-btn',start:'top 90%',once:true},delay:.35});
-
-  // Barber section — name swoops in, photo parallax already set
-  gsap.fromTo('.b-name',
-    {opacity:0,x:-50,skewX:-3},
-    {opacity:1,x:0,skewX:0,duration:1,ease:'power4.out',
-     scrollTrigger:{trigger:'.b-name',start:'top 85%',once:true}});
-
-  // Service rows — stagger slide left
-  document.querySelectorAll('.svc-row').forEach((el,i)=>{
-    gsap.fromTo(el,
-      {opacity:0,x:-32},
-      {opacity:1,x:0,duration:.6,ease:'power3.out',
-       scrollTrigger:{trigger:el,start:'top 92%',once:true},delay:i*.055});
-  });
-
-  // Review cards — stagger scale up
-  document.querySelectorAll('.prf-card').forEach((el,i)=>{
-    gsap.fromTo(el,
-      {opacity:0,y:32,scale:.97},
-      {opacity:1,y:0,scale:1,duration:.75,ease:'power3.out',
-       scrollTrigger:{trigger:el,start:'top 88%',once:true},delay:i*.1});
-  });
-
-  // Value bars
-  document.querySelectorAll('.val-col').forEach((col,i)=>{
-    gsap.fromTo(col,
-      {opacity:0,y:28},
-      {opacity:1,y:0,duration:.75,ease:'power3.out',
-       scrollTrigger:{trigger:col,start:'top 84%',once:true},delay:i*.12});
-    ScrollTrigger.create({trigger:col,start:'top 84%',once:true,
-      onEnter(){col.classList.add('on');}});
-  });
-
-  // Location map — slide right
-  gsap.fromTo('.map-box',
-    {opacity:0,x:40},
-    {opacity:1,x:0,duration:.9,ease:'power3.out',
-     scrollTrigger:{trigger:'.map-box',start:'top 85%',once:true}});
-
-  // Members section
-  gsap.fromTo('.mem-h2',
-    {opacity:0,y:40},
-    {opacity:1,y:0,duration:.9,ease:'power3.out',
-     scrollTrigger:{trigger:'.mem-h2',start:'top 85%',once:true}});
-
-  // Counters
-  document.querySelectorAll('.cnt').forEach(el=>{
-    const to=parseFloat(el.dataset.to),dec=parseInt(el.dataset.dec);
-    ScrollTrigger.create({trigger:el,start:'top 85%',once:true,
-      onEnter(){gsap.to({v:0},{v:to,duration:1.8,ease:'power2.out',
-        onUpdate(){el.textContent=this.targets()[0].v.toFixed(dec);}});}});
-  });
-
-  // Magnetic buttons (desktop only)
-  if(window.matchMedia('(pointer:fine)').matches){
-    document.querySelectorAll('.n-book,.btn-g,.btn-t,.rui-book-btn').forEach(btn=>{
-      btn.addEventListener('mousemove',e=>{
-        const r=btn.getBoundingClientRect();
-        gsap.to(btn,{x:(e.clientX-(r.left+r.width/2))*.22,y:(e.clientY-(r.top+r.height/2))*.22,duration:.4,ease:'power2.out'});
-      });
-      btn.addEventListener('mouseleave',()=>gsap.to(btn,{x:0,y:0,duration:.6,ease:'elastic.out(1,.4)'}));
-    });
-  }
-
-  // Video fallback
-  const vid=document.getElementById('herovid');
-  if(vid){vid.addEventListener('error',()=>{
-    vid.style.display='none';
-    const img=document.createElement('img');
-    img.src='./fhelipe.png';
-    img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.55) contrast(1.1) saturate(.7);';
-    vid.parentNode.insertBefore(img,vid);
-  });}
+// ═══════════════════════════════════════════════════════
+// HERO ENTRANCE
+// ═══════════════════════════════════════════════════════
+gsap.set('.hero-vid-tag',{opacity:0,y:20});
+gsap.set('.hero-vid-h1', {opacity:0,y:50,skewY:2});
+gsap.set('.hero-vid-p',  {opacity:0,y:20});
+gsap.set('.hero-vid-btns',{opacity:0,y:16});
+window.addEventListener('load',()=>{
+  gsap.to('#nav',{opacity:1,y:0,duration:.9,delay:.2,ease:'power2.out'});
+  gsap.to('.hero-vid-tag', {opacity:1,y:0,duration:.8,delay:.4,ease:'power3.out'});
+  gsap.to('.hero-vid-h1',  {opacity:1,y:0,skewY:0,duration:1.0,delay:.6,ease:'power4.out'});
+  gsap.to('.hero-vid-p',   {opacity:1,y:0,duration:.75,delay:.9,ease:'power3.out'});
+  gsap.to('.hero-vid-btns',{opacity:1,y:0,duration:.7,delay:1.1,ease:'power3.out'});
 });
+
+// ═══════════════════════════════════════════════════════
+// MARQUEE
+// ═══════════════════════════════════════════════════════
+const MI=['Precision Grooming','C/ Londres 67','Barcelona','Est. 2019','Eixample','Master Barbers','Premium Grooming','Precision Grooming','C/ Londres 67','Barcelona','Est. 2019','Eixample','Master Barbers','Premium Grooming'];
+const mt=document.getElementById('mtrack');
+if(mt) MI.forEach(i=>{const s=document.createElement('span');s.className='m-item';s.innerHTML='<span class="m-dot">◆</span>'+i;mt.appendChild(s);});
+
+// ═══════════════════════════════════════════════════════
+// CURSOR
+// ═══════════════════════════════════════════════════════
+if(window.matchMedia('(pointer:fine)').matches){
+  const cur=document.getElementById('cur'),ring=document.getElementById('cur-r');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  (function tick(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;
+    if(cur) cur.style.cssText='left:'+mx+'px;top:'+my+'px;';
+    if(ring) ring.style.cssText='left:'+rx+'px;top:'+ry+'px;';
+    requestAnimationFrame(tick);})();
+  document.querySelectorAll('a,button,.svc-row,.prf-card,.rui-attr').forEach(el=>{
+    el.addEventListener('mouseenter',()=>document.body.classList.add('hov'));
+    el.addEventListener('mouseleave',()=>document.body.classList.remove('hov'));
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// BARBER PHOTO FALLBACK
+// ═══════════════════════════════════════════════════════
+const bImg=document.querySelector('#bPhoto img');
+if(bImg){
+  const paths=['./fhelipe.png','./photos/fhelipe.png','./fhelipe.jpg'];
+  let idx=0;
+  bImg.onerror=function(){idx++;if(idx<paths.length) bImg.src=paths[idx];};
+  bImg.src=paths[0];
+}
+
+// ═══════════════════════════════════════════════════════
+// SCROLL ANIMATIONS — IntersectionObserver (Safari safe)
+// ═══════════════════════════════════════════════════════
+const animDefs=[
+  {sel:'.gc',        anim:'clip'},
+  {sel:'.g0',        anim:'fadeUp'},
+  {sel:'.g0l',       anim:'slideLeft'},
+  {sel:'.rui-attr',  anim:'fadeUp'},
+  {sel:'.rui-book-btn',anim:'fadeUp'},
+  {sel:'.b-name',    anim:'slideLeft'},
+  {sel:'.svc-row',   anim:'slideLeft'},
+  {sel:'.prf-card',  anim:'fadeUp'},
+  {sel:'.val-col',   anim:'fadeUp'},
+  {sel:'.map-box',   anim:'slideRight'},
+  {sel:'.mem-h2',    anim:'fadeUp'},
+  {sel:'#straight-razor-svg',anim:'scaleIn'},
+];
+
+animDefs.forEach(({sel,anim})=>{
+  document.querySelectorAll(sel).forEach(el=>{
+    if(anim==='clip')       gsap.set(el,{clipPath:'inset(0 100% 0 0)'});
+    else if(anim==='fadeUp')   gsap.set(el,{opacity:0,y:40});
+    else if(anim==='slideLeft')gsap.set(el,{opacity:0,x:-40});
+    else if(anim==='slideRight')gsap.set(el,{opacity:0,x:40});
+    else if(anim==='scaleIn')  gsap.set(el,{opacity:0,scale:.88,transformOrigin:'center'});
+  });
+});
+
+const seen=new Set();
+const obs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting||seen.has(e.target)) return;
+    seen.add(e.target); obs.unobserve(e.target);
+    const el=e.target, a=el.dataset.anim, d=parseFloat(el.dataset.delay||0);
+    if(a==='clip')       gsap.to(el,{clipPath:'inset(0 0% 0 0)',duration:1.0,ease:'power3.out',delay:d});
+    if(a==='fadeUp')     gsap.to(el,{opacity:1,y:0,duration:.8,ease:'power3.out',delay:d});
+    if(a==='slideLeft')  gsap.to(el,{opacity:1,x:0,duration:.75,ease:'power3.out',delay:d});
+    if(a==='slideRight') gsap.to(el,{opacity:1,x:0,duration:.9,ease:'power3.out',delay:d});
+    if(a==='scaleIn'){
+      gsap.to(el,{opacity:1,scale:1,duration:1.1,ease:'power3.out',delay:d});
+      setTimeout(()=>{const rw=document.getElementById('straight-razor-wrap');if(rw)rw.classList.add('open');},800);
+    }
+    if(el.classList.contains('val-col')) el.classList.add('on');
+    el.querySelectorAll('.cnt').forEach(cnt=>{
+      const to=parseFloat(cnt.dataset.to),dec=parseInt(cnt.dataset.dec);
+      gsap.to({v:0},{v:to,duration:1.8,ease:'power2.out',delay:d+.2,
+        onUpdate(){cnt.textContent=this.targets()[0].v.toFixed(dec);}});
+    });
+  });
+},{threshold:0.08,rootMargin:'0px 0px -50px 0px'});
+
+animDefs.forEach(({sel,anim})=>{
+  const staggerSels=['.rui-attr','.svc-row','.prf-card','.val-col'];
+  document.querySelectorAll(sel).forEach((el,i)=>{
+    el.dataset.anim=anim;
+    el.dataset.delay=staggerSels.includes(sel)?String(i*.08):String(parseFloat(getComputedStyle(el).getPropertyValue('--d')||0));
+    obs.observe(el);
+  });
+});
+
+// Standalone counters
+document.querySelectorAll('.cnt').forEach(el=>{
+  if(el.closest('.val-col')) return;
+  const to=parseFloat(el.dataset.to),dec=parseInt(el.dataset.dec);
+  const co=new IntersectionObserver(en=>{if(!en[0].isIntersecting)return;co.disconnect();
+    gsap.to({v:0},{v:to,duration:1.8,ease:'power2.out',onUpdate(){el.textContent=this.targets()[0].v.toFixed(dec);}});},{threshold:.5});
+  co.observe(el);
+});
+
+// Razor wrap click
+const rw=document.getElementById('straight-razor-wrap');
+if(rw) rw.addEventListener('click',()=>rw.classList.add('open'));
+
+// Barber parallax
+gsap.to('#bPhoto img',{yPercent:8,ease:'none',
+  scrollTrigger:{trigger:'#barber',start:'top bottom',end:'bottom top',scrub:1.5}});
+
+// Magnetic buttons
+if(window.matchMedia('(pointer:fine)').matches){
+  document.querySelectorAll('.n-book,.btn-g,.rui-book-btn').forEach(btn=>{
+    btn.addEventListener('mousemove',e=>{const r=btn.getBoundingClientRect();
+      gsap.to(btn,{x:(e.clientX-(r.left+r.width/2))*.2,y:(e.clientY-(r.top+r.height/2))*.2,duration:.4,ease:'power2.out'});});
+    btn.addEventListener('mouseleave',()=>gsap.to(btn,{x:0,y:0,duration:.55,ease:'elastic.out(1,.5)'}));
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// СЦЕНАРИЙ 1: RAZOR SPLIT
+// Бритва вылетает сбоку → видео разрезается → текст проявляется
+// ═══════════════════════════════════════════════════════
+(function razorSplit(){
+  const hero=document.getElementById('hero-vid-sec');
+  if(!hero) return;
+
+  // Blade — starts offscreen left, flies in on scroll
+  const blade=document.createElement('div');
+  blade.id='hs-blade';
+  blade.innerHTML=`<svg viewBox="0 0 860 80" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+    <defs>
+      <linearGradient id="hbG" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#4a3818"/>
+        <stop offset="25%" stop-color="#C9A84C"/>
+        <stop offset="48%" stop-color="#f5e4a0"/>
+        <stop offset="52%" stop-color="#ffffff" stop-opacity=".9"/>
+        <stop offset="75%" stop-color="#C9A84C"/>
+        <stop offset="100%" stop-color="#4a3818"/>
+      </linearGradient>
+      <filter id="hbGlow"><feGaussianBlur stdDeviation="4" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <path d="M30 22 L700 16 Q718 15 720 22 L720 58 Q718 65 700 64 L30 58Z"
+          fill="url(#hbG)" stroke="rgba(201,168,76,.5)" stroke-width=".8" filter="url(#hbGlow)"/>
+    <line x1="30" y1="55" x2="698" y2="61" stroke="rgba(255,255,255,.8)" stroke-width="1.5"/>
+    <line x1="30" y1="52" x2="698" y2="58" stroke="rgba(255,248,220,.4)" stroke-width=".7"/>
+    <path d="M30 22 Q10 32 8 40 Q10 48 30 58" fill="rgba(201,168,76,.15)" stroke="rgba(201,168,76,.6)" stroke-width=".8"/>
+    <line x1="30" y1="22" x2="700" y2="16" stroke="rgba(201,168,76,.9)" stroke-width="2.5"/>
+    <rect x="728" y="18" width="122" height="44" rx="7" fill="#1a1208" stroke="rgba(201,168,76,.6)" stroke-width=".9"/>
+    <line x1="750" y1="27" x2="750" y2="51" stroke="rgba(201,168,76,.3)" stroke-width=".8"/>
+    <line x1="768" y1="27" x2="768" y2="51" stroke="rgba(201,168,76,.25)" stroke-width=".7"/>
+    <line x1="786" y1="27" x2="786" y2="51" stroke="rgba(201,168,76,.2)" stroke-width=".7"/>
+    <line x1="820" y1="27" x2="820" y2="51" stroke="rgba(201,168,76,.2)" stroke-width=".7"/>
+    <circle cx="723" cy="40" r="7" fill="rgba(201,168,76,.08)" stroke="rgba(201,168,76,.65)" stroke-width=".8"/>
+    <circle cx="723" cy="40" r="2.5" fill="rgba(201,168,76,.5)"/>
+  </svg>`;
+  // Starts hidden off left — only appears on scroll
+  blade.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-160vw,-50%);width:min(860px,90vw);z-index:10;pointer-events:none;will-change:transform;opacity:0;';
+  hero.appendChild(blade);
+
+  // Spark line
+  const spark=document.createElement('div');
+  spark.id='hs-spark';
+  spark.style.cssText='position:absolute;top:50%;left:0;right:0;height:1px;transform:translateY(-50%) scaleX(0);transform-origin:center;background:linear-gradient(to right,transparent,rgba(255,255,255,.95) 20%,white 50%,rgba(255,255,255,.95) 80%,transparent);box-shadow:0 0 6px 1px rgba(255,255,255,.7),0 0 18px 2px rgba(201,168,76,.5);z-index:11;pointer-events:none;opacity:0;';
+  hero.appendChild(spark);
+
+  // Clone video for bottom half — hidden initially
+  const vid=document.getElementById('herovid');
+  const vidBot=vid.cloneNode(true);
+  vidBot.id='herovid-bot';
+  vidBot.className='hs-vid-bot';
+  vidBot.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.55) contrast(1.1) saturate(.7);clip-path:inset(100% 0 0 0);z-index:0;';
+  hero.insertBefore(vidBot,hero.firstChild);
+  vidBot.muted=true; vidBot.autoplay=true; vidBot.loop=true; vidBot.playsInline=true;
+  vidBot.play().catch(()=>{});
+
+  function easeOut(t){return 1-Math.pow(1-t,3);}
+  function lerp(a,b,t){return a+(b-a)*t;}
+
+  ScrollTrigger.create({
+    trigger: hero,
+    start: 'top top',
+    end: '+=100%',  // only fires when hero is in view = scrolling away from it
+    scrub: 1,
+    onUpdate(self){
+      const p=self.progress;
+
+      // 0-25%: blade flies in from left
+      if(p<.3){
+        const t=Math.min(1,p/.25);
+        blade.style.opacity=String(t);
+        const x=lerp(-160,0,easeOut(t));
+        blade.style.transform=`translate(calc(-50% + ${x>-10?0:x}vw), -50%) rotate(${lerp(-2,0,t)}deg)`;
+      }
+
+      // 25-40%: blade at center, micro-jerk + spark
+      if(p>=.23&&p<.45){
+        blade.style.opacity='1';
+        blade.style.transform='translate(-50%,-50%) rotate(0deg)';
+        const sp=Math.min(1,(p-.23)/.1);
+        const sparkOpacity=p<.35?sp:Math.max(0,1-(p-.35)/.1);
+        spark.style.transform=`translateY(-50%) scaleX(${sp})`;
+        spark.style.opacity=String(sparkOpacity);
+      }
+
+      // 40-75%: video splits top/bottom, blade stays
+      if(p>=.38){
+        const split=Math.min(48,(p-.38)/.37*48);
+        if(vid) vid.style.clipPath=`inset(0 0 ${split}% 0)`;
+        if(vidBot) vidBot.style.clipPath=`inset(${100-split}% 0 0 0)`;
+      }
+
+      // 70%+: blade drifts out right + fades
+      if(p>=.68){
+        const t=(p-.68)/.32;
+        blade.style.opacity=String(Math.max(0,1-t));
+        blade.style.transform=`translate(calc(-50% + ${t*80}vw),-50%) rotate(${t*3}deg)`;
+      }
+
+      // Reset when scrolled back to top
+      if(p===0){
+        blade.style.opacity='0';
+        blade.style.transform='translate(-160vw,-50%)';
+        spark.style.opacity='0';
+        if(vid) vid.style.clipPath='';
+        if(vidBot) vidBot.style.clipPath='inset(100% 0 0 0)';
+      }
+    }
+  });
+})();
+
+// ═══════════════════════════════════════════════════════
+// СЦЕНАРИЙ 2: SENSORY MIST — Canvas spray on Services
+// ═══════════════════════════════════════════════════════
+(function sensoryMist(){
+  const svc=document.getElementById('services');
+  if(!svc) return;
+
+  svc.style.position='relative';
+  svc.style.overflow='hidden';
+
+  // Frosted glass overlay — starts visible
+  const frost=document.createElement('div');
+  frost.id='mist-frost';
+  frost.style.cssText='position:absolute;inset:0;z-index:5;pointer-events:none;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);background:rgba(6,6,4,.5);transition:opacity .15s;';
+
+  // Canvas
+  const canvas=document.createElement('canvas');
+  canvas.id='mist-canvas';
+  canvas.style.cssText='position:absolute;inset:0;z-index:6;pointer-events:none;';
+  svc.appendChild(canvas);
+  svc.appendChild(frost);
+
+  // ── NOZZLE — bigger, next to "THE CRAFT" heading ─────
+  const nozzle=document.createElement('div');
+  nozzle.id='mist-nozzle';
+  // Height ~= h2 heading (~58px), placed left of heading area
+  nozzle.innerHTML=`<svg viewBox="0 0 52 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="nozG" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="rgba(201,168,76,.4)"/>
+        <stop offset="100%" stop-color="rgba(201,168,76,.1)"/>
+      </linearGradient>
+    </defs>
+    <!-- Bottle body -->
+    <rect x="14" y="34" width="24" height="44" rx="5" fill="url(#nozG)" stroke="rgba(201,168,76,.7)" stroke-width="1.2"/>
+    <!-- Shoulder -->
+    <path d="M14 38 Q14 30 20 28 L32 28 Q38 30 38 38" fill="rgba(201,168,76,.12)" stroke="rgba(201,168,76,.6)" stroke-width="1"/>
+    <!-- Pump head -->
+    <rect x="10" y="20" width="32" height="12" rx="3" fill="rgba(201,168,76,.15)" stroke="rgba(201,168,76,.7)" stroke-width="1.1"/>
+    <!-- Nozzle tip -->
+    <rect x="38" y="22" width="10" height="8" rx="2" fill="rgba(201,168,76,.3)" stroke="rgba(201,168,76,.8)" stroke-width="1"/>
+    <!-- Pump stem -->
+    <line x1="26" y1="20" x2="26" y2="10" stroke="rgba(201,168,76,.7)" stroke-width="2" stroke-linecap="round"/>
+    <!-- Spray dots -->
+    <circle cx="52" cy="22" r="1.5" fill="rgba(201,168,76,.6)"/>
+    <circle cx="55" cy="18" r="1" fill="rgba(201,168,76,.4)"/>
+    <circle cx="55" cy="26" r="1" fill="rgba(201,168,76,.4)"/>
+    <circle cx="58" cy="14" r=".8" fill="rgba(201,168,76,.3)"/>
+    <circle cx="58" cy="30" r=".8" fill="rgba(201,168,76,.3)"/>
+    <!-- Label line -->
+    <line x1="18" y1="55" x2="34" y2="55" stroke="rgba(201,168,76,.2)" stroke-width=".6"/>
+    <line x1="18" y1="60" x2="30" y2="60" stroke="rgba(201,168,76,.15)" stroke-width=".5"/>
+  </svg>`;
+  // Position: absolute, aligns with heading top-right of heading block
+  nozzle.style.cssText='position:absolute;top:0;right:52px;z-index:7;opacity:.75;height:90px;width:52px;';
+  svc.appendChild(nozzle);
+
+  let W,H,ctx2,particles=[];
+  function resize(){
+    const r=svc.getBoundingClientRect();
+    W=canvas.width=r.width||800; H=canvas.height=r.height||600;
+  }
+  resize();
+  window.addEventListener('resize',resize,{passive:true});
+  ctx2=canvas.getContext('2d');
+
+  let revealed=0;
+  let sprayTimer=null;
+  let isInView=false;
+  let rafId=null;
+
+  class Particle{
+    constructor(x,y,speed){
+      this.x=x; this.y=y;
+      // Spray goes LEFT from nozzle tip
+      const a=Math.PI+(Math.random()-.5)*.7;
+      this.vx=Math.cos(a)*speed*(1+Math.random()*.5);
+      this.vy=Math.sin(a)*speed*(Math.random()-.5)*1.5;
+      this.life=1; this.decay=.018+Math.random()*.02;
+      this.r=2+Math.random()*4;
+    }
+    update(){
+      this.x+=this.vx; this.y+=this.vy;
+      this.vx*=.97; this.vy+=.03;
+      this.life-=this.decay;
+    }
+    draw(){
+      ctx2.beginPath();
+      ctx2.arc(this.x,this.y,this.r,0,Math.PI*2);
+      ctx2.fillStyle=`rgba(201,168,76,${this.life*.35})`;
+      ctx2.fill();
+      // Reveal frost where particles land
+      const dr=this.r*14;
+      const g=ctx2.createRadialGradient(this.x,this.y,0,this.x,this.y,dr);
+      g.addColorStop(0,`rgba(0,0,0,${this.life*.4})`);
+      g.addColorStop(1,'rgba(0,0,0,0)');
+      ctx2.beginPath();
+      ctx2.arc(this.x,this.y,dr,0,Math.PI*2);
+      ctx2.fillStyle=g;
+      ctx2.fill();
+    }
+  }
+
+  function nozzleTip(){
+    const nr=nozzle.getBoundingClientRect();
+    const sr=svc.getBoundingClientRect();
+    // Tip is at right side of nozzle
+    return{x:nr.right-sr.left, y:nr.top-sr.top+26};
+  }
+
+  function sprayBurst(intensity){
+    if(!isInView||!W) return;
+    const np=nozzleTip();
+    const count=Math.floor(intensity*50+10);
+    const speed=intensity*12+4;
+    for(let i=0;i<count;i++) particles.push(new Particle(np.x,np.y,speed));
+    revealed=Math.min(1,revealed+intensity*.3);
+  }
+
+  function animate(){
+    rafId=requestAnimationFrame(animate);
+    // Use destination-out to cut holes in frost via canvas compositing
+    ctx2.globalCompositeOperation='source-over';
+    ctx2.clearRect(0,0,W,H);
+
+    // Draw frost layer on canvas (replaced each frame)
+    ctx2.globalCompositeOperation='source-over';
+
+    particles=particles.filter(p=>p.life>0);
+    particles.forEach(p=>{p.update();p.draw();});
+
+    // Update frost opacity — fast reveal
+    frost.style.opacity=String(Math.max(0,(1-revealed)*1));
+  }
+
+  // ── RESTORE — 3x faster than before (800ms instead of 2500ms) ──
+  function scheduleRestore(){
+    if(sprayTimer) clearTimeout(sprayTimer);
+    sprayTimer=setTimeout(()=>{
+      const fadeInterval=setInterval(()=>{
+        revealed=Math.max(0,revealed-.008); // 4x faster fade back
+        frost.style.opacity=String(Math.max(0,(1-revealed)));
+        if(revealed<=0){ clearInterval(fadeInterval); }
+      },30);
+    },800); // wait 800ms after stop (was 2500ms)
+  }
+
+  // Scroll velocity → spray intensity
+  let lastScrollY=window.scrollY;
+  window.addEventListener('scroll',()=>{
+    if(!isInView) return;
+    const curr=window.scrollY;
+    const vel=Math.abs(curr-lastScrollY);
+    lastScrollY=curr;
+    const intensity=Math.min(1,vel/30);
+    if(intensity>.03) sprayBurst(intensity);
+    scheduleRestore();
+  },{passive:true});
+
+  // Observe services section
+  const svcObs=new IntersectionObserver(entries=>{
+    isInView=entries[0].isIntersecting;
+    if(isInView){
+      if(!rafId) animate();
+      // Auto-burst on enter to tease the effect
+      setTimeout(()=>sprayBurst(.6),200);
+      setTimeout(()=>sprayBurst(.4),600);
+      setTimeout(()=>sprayBurst(.3),1000);
+    } else {
+      if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+    }
+  },{threshold:.15});
+  svcObs.observe(svc);
+})();
+  blade.innerHTML=`<svg viewBox="0 0 860 80" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+    <defs>
+      <linearGradient id="hbG" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#4a3818"/>
+        <stop offset="25%" stop-color="#C9A84C"/>
+        <stop offset="48%" stop-color="#f5e4a0"/>
+        <stop offset="52%" stop-color="#ffffff" stop-opacity=".9"/>
+        <stop offset="75%" stop-color="#C9A84C"/>
+        <stop offset="100%" stop-color="#4a3818"/>
+      </linearGradient>
+      <filter id="hbGlow"><feGaussianBlur stdDeviation="4" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <!-- Blade body -->
+    <path d="M30 22 L700 16 Q718 15 720 22 L720 58 Q718 65 700 64 L30 58Z"
+          fill="url(#hbG)" stroke="rgba(201,168,76,.5)" stroke-width=".8" filter="url(#hbGlow)"/>
+    <!-- Edge shimmer -->
+    <line x1="30" y1="55" x2="698" y2="61" stroke="rgba(255,255,255,.8)" stroke-width="1.5"/>
+    <line x1="30" y1="52" x2="698" y2="58" stroke="rgba(255,248,220,.4)" stroke-width=".7"/>
+    <!-- Tip -->
+    <path d="M30 22 Q10 32 8 40 Q10 48 30 58" fill="rgba(201,168,76,.15)" stroke="rgba(201,168,76,.6)" stroke-width=".8"/>
+    <!-- Spine top -->
+    <line x1="30" y1="22" x2="700" y2="16" stroke="rgba(201,168,76,.9)" stroke-width="2.5"/>
+    <!-- Handle -->
+    <rect x="728" y="18" width="122" height="44" rx="7"
+          fill="#1a1208" stroke="rgba(201,168,76,.6)" stroke-width=".9"/>
+    <line x1="750" y1="27" x2="750" y2="51" stroke="rgba(201,168,76,.3)" stroke-width=".8"/>
+    <line x1="768" y1="27" x2="768" y2="51" stroke="rgba(201,168,76,.25)" stroke-width=".7"/>
+    <line x1="786" y1="27" x2="786" y2="51" stroke="rgba(201,168,76,.2)" stroke-width=".7"/>
+    <line x1="820" y1="27" x2="820" y2="51" stroke="rgba(201,168,76,.2)" stroke-width=".7"/>
+    <!-- Pivot -->
+    <circle cx="723" cy="40" r="7" fill="rgba(201,168,76,.08)" stroke="rgba(201,168,76,.65)" stroke-width=".8"/>
+    <circle cx="723" cy="40" r="2.5" fill="rgba(201,168,76,.5)"/>
+  </svg>`;
+  blade.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-150vw,-50%);width:min(860px,90vw);z-index:10;pointer-events:none;will-change:transform;';
+  hero.appendChild(blade);
+
+  // Spark line
+  const spark=document.createElement('div');
+  spark.id='hs-spark';
+  spark.style.cssText='position:absolute;top:50%;left:0;right:0;height:1px;transform:translateY(-50%) scaleX(0);transform-origin:center;background:linear-gradient(to right,transparent,rgba(255,255,255,.95) 20%,white 50%,rgba(255,255,255,.95) 80%,transparent);box-shadow:0 0 6px 1px rgba(255,255,255,.7),0 0 18px 2px rgba(201,168,76,.5);z-index:11;pointer-events:none;';
+  hero.appendChild(spark);
+
+  // Video clip containers (top/bottom halves)
+  const vid=document.getElementById('herovid');
+  const overlay=hero.querySelector('.hero-vid-overlay');
+
+  let triggered=false;
+  const heroObs=new IntersectionObserver(entries=>{
+    if(!entries[0].isIntersecting||triggered) return;
+    // Don't trigger on load — wait for scroll
+  },{threshold:.5});
+  heroObs.observe(hero);
+
+  // ScrollTrigger for razor split
+  ScrollTrigger.create({
+    trigger: hero,
+    start: 'top top',
+    end: 'bottom top',
+    scrub: 1,
+    onUpdate(self){
+      const p=self.progress;
+
+      // 0-20%: blade flies in
+      if(p<.2){
+        const t=p/.2;
+        const x=(-150+150*easeOut(t));
+        blade.style.transform=`translate(calc(-50% + ${x}vw), -50%) rotate(${(1-t)*-1}deg)`;
+      }
+
+      // 20-35%: blade impact + spark
+      if(p>=.18&&p<.38){
+        blade.style.transform='translate(-50%,-50%) rotate(0deg)';
+        const sp=Math.min(1,(p-.18)/.08);
+        spark.style.transform=`translateY(-50%) scaleX(${sp})`;
+        spark.style.opacity=p<.28?'1':String(Math.max(0,1-(p-.28)/.1));
+      }
+
+      // 35-70%: video splits
+      if(p>=.33){
+        const split=Math.min(55, (p-.33)/.37*55);
+        if(vid) vid.style.clipPath=`inset(0 0 ${split}% 0)`;
+        // Mirror bottom
+        const vidBot=hero.querySelector('.hs-vid-bot');
+        if(vidBot) vidBot.style.clipPath=`inset(${100-split}% 0 0 0)`;
+      }
+
+      // 70%+: blade fades
+      if(p>=.65){
+        blade.style.opacity=String(Math.max(0,1-(p-.65)/.15));
+      }
+    }
+  });
+
+  // Clone video for bottom half
+  const vidBot=vid.cloneNode(true);
+  vidBot.id='herovid-bot';
+  vidBot.className='hs-vid-bot';
+  vidBot.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.55) contrast(1.1) saturate(.7);clip-path:inset(100% 0 0 0);';
+  hero.insertBefore(vidBot,hero.firstChild);
+  vidBot.muted=true; vidBot.autoplay=true; vidBot.loop=true; vidBot.playsInline=true;
+  vidBot.play().catch(()=>{});
+
+  function easeOut(t){return 1-Math.pow(1-t,3);}
+})();
+
+// Video fallback
+const vid2=document.getElementById('herovid');
+if(vid2){vid2.addEventListener('error',()=>{
+  vid2.style.display='none';
+  const img=document.createElement('img');
+  img.src='./fhelipe.png';
+  img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.55) contrast(1.1) saturate(.7);';
+  vid2.parentNode.insertBefore(img,vid2);
+});}
 </script>
 </body>
 </html>
