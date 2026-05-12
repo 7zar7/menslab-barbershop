@@ -29,7 +29,7 @@
 }
 html{background:var(--bg);overflow-x:hidden;}
 body{background:var(--bg);color:var(--cream);font-family:'DM Sans',sans-serif;
-  overflow-x:hidden;-webkit-font-smoothing:antialiased;cursor:none;}
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;cursor:auto;}
 body.no-js{cursor:auto;}
 
 /* ══ CURSOR ════════════════════════════════════════════════ */
@@ -68,13 +68,13 @@ body.hov #cur-r{width:48px;height:48px;border-color:var(--gold);}
 .n-links a:hover{color:var(--cream);}
 .n-book{font-family:'Syne',sans-serif;font-weight:700;font-size:10px;letter-spacing:.22em;
   text-transform:uppercase;color:var(--gold);background:transparent;
-  border:.5px solid var(--gold);padding:9px 22px;cursor:none;
+  border:.5px solid var(--gold);padding:9px 22px;cursor:pointer;
   text-decoration:none;transition:background .25s,color .25s;display:inline-block;}
 .n-book:hover{background:var(--gold);color:var(--bg);}
 
 /* ══ SCROLL SEQUENCE WRAPPER ═══════════════════════════════ */
 /* This section pins and uses 500vh of scroll */
-#seq-wrap{position:relative;height:500vh;}
+#seq-wrap{position:relative;height:200vh;}
 #seq-sticky{position:sticky;top:0;height:100vh;overflow:hidden;
   display:flex;align-items:center;justify-content:center;
   background:var(--bg);}
@@ -226,7 +226,7 @@ body.hov #cur-r{width:48px;height:48px;border-color:var(--gold);}
 .svc-list{border-top:.5px solid rgba(255,255,255,.04);}
 .svc-row{display:flex;align-items:center;justify-content:space-between;
   padding:19px 0;border-bottom:.5px solid rgba(255,255,255,.04);
-  position:relative;cursor:none;overflow:hidden;}
+  position:relative;cursor:pointer;overflow:hidden;}
 .svc-row::after{content:'';position:absolute;bottom:0;left:0;
   height:.5px;width:0;background:var(--gold);
   transition:width .45s cubic-bezier(.4,0,.2,1);}
@@ -248,12 +248,12 @@ body.hov #cur-r{width:48px;height:48px;border-color:var(--gold);}
 /* ══ BUTTONS ═══════════════════════════════════════════════ */
 .btn-g{font-family:'Syne',sans-serif;font-weight:700;font-size:10px;
   letter-spacing:.22em;text-transform:uppercase;background:var(--gold);
-  color:var(--bg);border:none;padding:14px 34px;cursor:none;
+  color:var(--bg);border:none;padding:14px 34px;cursor:pointer;
   text-decoration:none;display:inline-block;transition:opacity .2s;}
 .btn-g:hover{opacity:.85;}
 .btn-t{font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.16em;
   text-transform:uppercase;color:var(--muted);background:none;border:none;
-  cursor:none;display:flex;align-items:center;gap:8px;
+  cursor:pointer;display:flex;align-items:center;gap:8px;
   text-decoration:none;transition:color .2s;}
 .btn-t:hover{color:var(--cream);}
 
@@ -314,11 +314,11 @@ body.hov #cur-r{width:48px;height:48px;border-color:var(--gold);}
 .ef{display:flex;border:.5px solid var(--gold-a25);}
 .ei{flex:1;background:transparent;border:none;outline:none;
   font-family:'DM Sans',sans-serif;font-size:13px;color:var(--cream);
-  padding:13px 18px;letter-spacing:.03em;cursor:none;}
+  padding:13px 18px;letter-spacing:.03em;cursor:pointer;}
 .ei::placeholder{color:var(--dim);}
 .eb{font-family:'Syne',sans-serif;font-weight:700;font-size:10px;
   letter-spacing:.2em;text-transform:uppercase;background:var(--gold);
-  color:var(--bg);border:none;padding:13px 20px;cursor:none;
+  color:var(--bg);border:none;padding:13px 20px;cursor:pointer;
   transition:opacity .2s;white-space:nowrap;}
 .eb:hover{opacity:.85;}
 .ln{font-family:'JetBrains Mono',monospace;font-size:9px;
@@ -346,9 +346,9 @@ footer{padding:60px 52px 36px;border-top:.5px solid var(--border);}
 .fl2{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.2em;color:var(--dim);}
 
 /* ══ GSAP INITIAL STATES ═══════════════════════════════════ */
-.g0{opacity:0;transform:translateY(32px);}
-.g0l{opacity:0;transform:translateX(-24px);}
-.gc{clip-path:inset(0 100% 0 0);}
+.g0{opacity:1;transform:translateY(0);}
+.g0l{opacity:1;transform:translateX(0);}
+.gc{clip-path:inset(0 0% 0 0);}
 
 /* ══ MOBILE ════════════════════════════════════════════════ */
 @media(max-width:900px){
@@ -746,7 +746,6 @@ footer{padding:60px 52px 36px;border-top:.5px solid var(--border);}
 <!-- ══════════════════ JS ════════════════════════════════════ -->
 <script>
 document.addEventListener('DOMContentLoaded', function(){
-  document.body.style.cursor='none';
 
   /* ── LENIS ─────────────────────────────────────────── */
   const lenis = new Lenis({ duration:1.15, easing: t=>Math.min(1,1.001-Math.pow(2,-10*t)) });
@@ -816,7 +815,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
   /* Stage 0 → 1 : Razor fully visible, hint fades */
   ScrollTrigger.create({
-    trigger: seqWrap, start:'top top', end:'20% top',
+    trigger: seqWrap, start:'top top', end:'10% top',
     scrub:1.5,
     onUpdate(self){
       gsap.set(hint,{opacity: 1 - self.progress * 5});
@@ -827,7 +826,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
   /* Stage 1 → 2 : EXPLODE — parts fly apart + PRECISION label */
   gsap.timeline({
-    scrollTrigger:{trigger:seqWrap,start:'18% top',end:'48% top',scrub:1.5}
+    scrollTrigger:{trigger:seqWrap,start:'10% top',end:'45% top',scrub:1.5}
   })
   .to(blade,  {x:-180,y:-30, rotation:-8,  ease:'power1.inOut'},0)
   .to(spine,  {x:-140,y:-80, rotation:-12, ease:'power1.inOut'},0)
@@ -843,7 +842,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
   /* Stage 2 → 3 : CHEMISTRY — parts drift more */
   gsap.timeline({
-    scrollTrigger:{trigger:seqWrap,start:'48% top',end:'74% top',scrub:1.5}
+    scrollTrigger:{trigger:seqWrap,start:'45% top',end:'72% top',scrub:1.5}
   })
   .to(blade,  {x:-240,y:60,  rotation:-18, ease:'power1.inOut'},0)
   .to(spine,  {x:80,  y:-120,rotation:20,  ease:'power1.inOut'},0)
@@ -855,7 +854,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
   /* Stage 3 → end : ART — parts reassemble */
   gsap.timeline({
-    scrollTrigger:{trigger:seqWrap,start:'74% top',end:'98% top',scrub:1.5}
+    scrollTrigger:{trigger:seqWrap,start:'72% top',end:'98% top',scrub:1.5}
   })
   .to([blade,spine,handle,pivot],{x:0,y:0,rotation:0,ease:'power2.inOut'},0)
   .to(dims,   {opacity:1, scale:1,          ease:'power2.out'}, .3)
@@ -874,19 +873,19 @@ document.addEventListener('DOMContentLoaded', function(){
 
   /* ── CLIP REVEALS ──────────────────────────────────── */
   document.querySelectorAll('.gc').forEach(el=>{
-    gsap.to(el,{clipPath:'inset(0 0% 0 0)',duration:1.1,ease:'power3.out',
+    gsap.fromTo(el,{clipPath:'inset(0 100% 0 0)'},{clipPath:'inset(0 0% 0 0)',duration:1.1,ease:'power3.out',
       scrollTrigger:{trigger:el,start:'top 88%',once:true}});
   });
 
   /* ── FADE UP REVEALS ───────────────────────────────── */
   document.querySelectorAll('.g0').forEach(el=>{
     const d=parseFloat(getComputedStyle(el).getPropertyValue('--d')||'0');
-    gsap.to(el,{opacity:1,y:0,duration:.8,ease:'power3.out',delay:d,
+    gsap.fromTo(el,{opacity:0,y:32},{opacity:1,y:0,duration:.8,ease:'power3.out',delay:d,
       scrollTrigger:{trigger:el,start:'top 88%',once:true}});
   });
   document.querySelectorAll('.g0l').forEach(el=>{
     const d=parseFloat(getComputedStyle(el).getPropertyValue('--d')||'0');
-    gsap.to(el,{opacity:1,x:0,duration:.7,ease:'power3.out',delay:d,
+    gsap.fromTo(el,{opacity:0,x:-24},{opacity:1,x:0,duration:.7,ease:'power3.out',delay:d,
       scrollTrigger:{trigger:el,start:'top 90%',once:true}});
   });
 
