@@ -377,6 +377,52 @@ footer{padding:60px 52px 36px;border-top:.5px solid var(--border);}
   .ft{flex-direction:column;}
   .b-stats{gap:20px;}
 }
+
+/* ══ HERO VIDEO ═════════════════════════════════════════════ */
+#hero-vid-sec{position:relative;height:100vh;overflow:hidden;}
+#herovid{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center;
+  filter:brightness(.55) contrast(1.1) saturate(.7);}
+.hero-vid-overlay{position:absolute;inset:0;
+  background:linear-gradient(to bottom,
+    rgba(6,6,4,.5) 0%,
+    transparent 30%,
+    transparent 55%,
+    rgba(6,6,4,.85) 100%);}
+.hero-vid-content{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:0 52px 80px;z-index:2;}
+.hero-vid-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;letter-spacing:.4em;color:var(--gold);
+  text-transform:uppercase;margin-bottom:20px;
+  display:flex;align-items:center;gap:14px;}
+.hero-vid-tag::before{content:'';display:block;
+  width:28px;height:.5px;background:var(--gold);}
+.hero-vid-h1{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(56px,8vw,110px);
+  letter-spacing:-.04em;text-transform:uppercase;
+  line-height:.88;margin-bottom:24px;color:var(--cream);}
+.hero-vid-h1 em{color:var(--gold);font-style:normal;display:block;}
+.hero-vid-p{
+  font-size:15px;color:rgba(237,232,220,.65);
+  line-height:1.7;margin-bottom:36px;
+  font-family:'DM Sans',sans-serif;max-width:480px;}
+.hero-vid-btns{display:flex;align-items:center;gap:24px;}
+.hero-vid-scroll{
+  position:absolute;bottom:36px;right:52px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:.35em;
+  color:rgba(201,168,76,.4);text-transform:uppercase;
+  animation:pulse 2s ease-in-out infinite;}
+
+/* ══ SEQ SECTION TAG ════════════════════════════════════════ */
+#seq-intro{
+  text-align:center;padding:48px 52px 0;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:.42em;color:var(--gold);
+  text-transform:uppercase;}
 </style>
 </head>
 <body>
@@ -396,7 +442,26 @@ footer{padding:60px 52px 36px;border-top:.5px solid var(--border);}
   </div>
 </nav>
 
+<!-- ══ HERO VIDEO ═══════════════════════════════════════════ -->
+<div id="hero-vid-sec">
+  <video id="herovid" autoplay muted loop playsinline poster="./fhelipe2.jpg">
+    <source src="./video.mp4" type="video/mp4">
+  </video>
+  <div class="hero-vid-overlay"></div>
+  <div class="hero-vid-content">
+    <div class="hero-vid-tag">— Eixample, Barcelona · Est. 2019</div>
+    <h1 class="hero-vid-h1">Not a cut.<br><em>A Signature.</em></h1>
+    <p class="hero-vid-p">Premium men's grooming in the heart of Eixample.<br>Crafted by Fhelipe Antolin.</p>
+    <div class="hero-vid-btns">
+      <a href="https://www.menslabbcn.com/booking" class="btn-g" target="_blank">Book Your Visit</a>
+      <a href="#services" class="btn-t">View Services <span style="margin-left:6px">↓</span></a>
+    </div>
+  </div>
+  <div class="hero-vid-scroll">SCROLL TO EXPLORE</div>
+</div>
+
 <!-- ══ SCROLL SEQUENCE ══════════════════════════════════════ -->
+<div id="seq-intro">— The Anatomy of Style</div>
 <div id="seq-wrap">
   <div id="seq-sticky">
     <div id="seq-glow"></div>
@@ -523,20 +588,7 @@ footer{padding:60px 52px 36px;border-top:.5px solid var(--border);}
   <div class="m-track" id="mtrack"></div>
 </div>
 
-<!-- ══ VIDEO SECTION ════════════════════════════════════════ -->
-<div id="video-sec">
-  <!-- Replace video.mp4 with your Kling video -->
-  <video id="barbervid" autoplay muted loop playsinline
-         poster="./fhelipe.jpg">
-    <source src="./video.mp4" type="video/mp4">
-    <!-- Fallback: show fhelipe photo if no video -->
-  </video>
-  <div class="vid-overlay"></div>
-  <div class="vid-text g0">
-    <div class="vid-tag">— The Craft</div>
-    <h2 class="vid-h2">Not a cut.<br><em>A signature.</em></h2>
-  </div>
-</div>
+
 
 <!-- ══ BARBER ════════════════════════════════════════════════ -->
 <div id="barber">
@@ -558,7 +610,7 @@ footer{padding:60px 52px 36px;border-top:.5px solid var(--border);}
         <div class="bs-l">Google Rating</div>
       </div>
       <div>
-        <div class="bs-n"><span class="cnt" data-to="7" data-dec="0">7</span><em>+</em></div>
+        <div class="bs-n"><span class="cnt" data-to="5" data-dec="0">5</span><em>+</em></div>
         <div class="bs-l">Years in BCN</div>
       </div>
       <div>
@@ -784,6 +836,16 @@ document.addEventListener('DOMContentLoaded', function(){
 
   /* ── NAV ───────────────────────────────────────────── */
   gsap.to('#nav',{opacity:1,y:0,duration:.9,delay:.1,ease:'power2.out'});
+
+  // Hero video content animate in
+  gsap.from('.hero-vid-tag',{opacity:0,y:20,duration:.7,delay:.3,ease:'power3.out'});
+  gsap.from('.hero-vid-h1',{opacity:0,y:40,duration:.9,delay:.5,ease:'power4.out'});
+  gsap.from('.hero-vid-p',{opacity:0,y:20,duration:.7,delay:.8,ease:'power3.out'});
+  gsap.from('.hero-vid-btns',{opacity:0,y:20,duration:.7,delay:1.0,ease:'power3.out'});
+
+  // Force hero video play
+  const hv=document.getElementById('herovid');
+  if(hv){ hv.play().catch(()=>{}); }
   lenis.on('scroll',({scroll})=>{
     document.getElementById('nav').classList.toggle('solid',scroll>40);
   });
@@ -868,8 +930,7 @@ document.addEventListener('DOMContentLoaded', function(){
     scrollTrigger:{trigger:'#barber',start:'top bottom',end:'bottom top',scrub:1.5}});
 
   /* ── VIDEO SECTION ─────────────────────────────────── */
-  gsap.to('.vid-text',{opacity:1,y:0,duration:.8,ease:'power3.out',
-    scrollTrigger:{trigger:'#video-sec',start:'top 80%',once:true}});
+  // hero video text visible on load
 
   /* ── CLIP REVEALS ──────────────────────────────────── */
   document.querySelectorAll('.gc').forEach(el=>{
@@ -921,7 +982,7 @@ document.addEventListener('DOMContentLoaded', function(){
   });
 
   /* ── VIDEO FALLBACK (show photo if no video) ───────── */
-  const vid=document.getElementById('barbervid');
+  const vid=document.getElementById('herovid');
   if(vid){
     vid.addEventListener('error',()=>{
       vid.style.display='none';
