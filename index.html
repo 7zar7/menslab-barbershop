@@ -246,9 +246,18 @@ footer{padding:52px 52px 32px;border-top:.5px solid var(--border);}
   .ft{flex-direction:column;gap:28px;}
 }
 @media(max-width:480px){
-  .hero-vid-h1{font-size:clamp(36px,12vw,56px);}
-  .b-name{font-size:clamp(34px,9vw,50px);}
+  .hero-vid-h1{font-size:clamp(26px,9vw,42px);letter-spacing:-.02em;}
+  .hero-vid-h1 em{letter-spacing:-.02em;}
+  .hero-vid-content{padding:0 16px 48px;}
+  .b-name{font-size:clamp(32px,9vw,48px);}
 }
+
+/* Mobile fallback */
+@media(max-width:768px){
+  #split-text{padding:0 20px 56px;}
+}
+.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}
+.d4{transition-delay:.4s;}.d5{transition-delay:.5s;}.d6{transition-delay:.6s;}
 </style>
 </head>
 <body>
@@ -264,13 +273,14 @@ footer{padding:52px 52px 32px;border-top:.5px solid var(--border);}
     <a href="https://www.menslabbcn.com/booking" class="n-book" target="_blank">Book Now</a>
   </div>
 </nav>
+<!-- HERO -->
 <div id="hero-vid-sec">
-  <video id="herovid" autoplay muted loop playsinline poster="./photos/fhelipe.png">
+  <video id="herovid" autoplay muted loop playsinline poster="./fhelipe.png">
     <source src="./video.mp4" type="video/mp4">
   </video>
   <div class="hero-vid-overlay"></div>
   <div class="hero-vid-content">
-    <div class="hero-vid-tag">-- Eixample, Barcelona . Est. 2019</div>
+    <div class="hero-vid-tag">— Eixample, Barcelona · Est. 2019</div>
     <h1 class="hero-vid-h1">Not a cut.<br><em>A Signature.</em></h1>
     <p class="hero-vid-p">Premium men's grooming in the heart of Eixample.<br>Crafted by Fhelipe Antolin.</p>
     <div class="hero-vid-btns">
@@ -283,10 +293,10 @@ footer{padding:52px 52px 32px;border-top:.5px solid var(--border);}
 <section id="razor-ui-section">
   <div class="rui-wrap">
     <div class="rui-left">
-      <div class="rui-tag"><span class="rui-tag-r"></span>The Instrument</div>
-      <h2 class="rui-h2 gc">Crafted for<br><em>Precision.</em></h2>
+      <div class="rui-tag reveal-up"><span class="rui-tag-r"></span>The Instrument</div>
+      <h2 class="rui-h2 reveal-clip d1">Crafted for<br><em>Precision.</em></h2>
       <div class="rui-attrs">
-        <a href="https://www.menslabbcn.com/booking" target="_blank" class="rui-attr g0">
+        <a href="https://www.menslabbcn.com/booking" target="_blank" class="rui-attr reveal-up d2">
           <div class="rui-attr-icon">
             <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect x="2" y="4" width="16" height="13" rx="1.5" stroke="#C9A84C" stroke-width="1.1"/>
@@ -603,7 +613,7 @@ footer{padding:52px 52px 32px;border-top:.5px solid var(--border);}
 </section>
 <footer>
   <div class="ft">
-    <div><div class="fb">Men's <em>&</em> Lab</div><div class="ft-tag">Fashion fades. Style is eternal.</div></div>
+    <div><div class="fb">Men's <em>&amp;</em> Lab</div><div class="ft-tag">Fashion fades. Style is eternal.</div></div>
     <div class="fc"><div class="fl">Location</div><div class="fv">C/ de Londres, 67<br>08036 Barcelona<br>Eixample District<br><a href="https://www.menslabbcn.com/booking" target="_blank" style="color:var(--gold);margin-top:4px;display:inline-block">Book online -></a></div></div>
     <div class="fc"><div class="fl">Hours</div><div class="fv">Mon - Fri . 10-20h<br>Saturday . 10-18h<br>Sunday . Closed</div></div>
     <div class="fc"><div class="fl">Social</div><div class="fv"><a href="https://www.instagram.com/hsmenslab" target="_blank">Instagram @hsmenslab</a><a href="https://www.menslabbcn.com/booking" target="_blank">Book Online</a><a href="https://www.facebook.com/hsmenslab" target="_blank">Facebook</a></div></div>
@@ -637,54 +647,161 @@ document.addEventListener('DOMContentLoaded',function(){
     });
   }
   gsap.to('#nav',{opacity:1,y:0,duration:.9,delay:.1,ease:'power2.out'});
-  gsap.from('.hero-vid-tag',{opacity:0,y:20,duration:.7,delay:.3,ease:'power3.out'});
-  gsap.from('.hero-vid-h1',{opacity:0,y:40,duration:.9,delay:.5,ease:'power4.out'});
-  gsap.from('.hero-vid-p',{opacity:0,y:20,duration:.7,delay:.8,ease:'power3.out'});
-  gsap.from('.hero-vid-btns',{opacity:0,y:20,duration:.7,delay:1.0,ease:'power3.out'});
+
   const hv=document.getElementById('herovid');
   if(hv)hv.play().catch(()=>{});
+
+  gsap.fromTo('.hero-vid-tag',{opacity:0,y:20},{opacity:1,y:0,duration:.8,delay:.3,ease:'power3.out'});
+  gsap.fromTo('.hero-vid-h1',{opacity:0,y:50,skewY:2},{opacity:1,y:0,skewY:0,duration:1,delay:.5,ease:'power4.out'});
+  gsap.fromTo('.hero-vid-p', {opacity:0,y:20},{opacity:1,y:0,duration:.75,delay:.8,ease:'power3.out'});
+  gsap.fromTo('.hero-vid-btns',{opacity:0,y:16},{opacity:1,y:0,duration:.7,delay:1.0,ease:'power3.out'});
+
   lenis.on('scroll',({scroll})=>document.getElementById('nav').classList.toggle('solid',scroll>40));
-  // Barber photo — try multiple filename variants
+
+  // Barber photo fallback
   const bImg=document.querySelector('#bPhoto img');
   if(bImg){
-    const paths=['./fhelipe.png','./photos/fhelipe.png','./fhelipe.jpg','./photos/fhelipe.jpg','./barber.png','./barber.jpg'];
+    const paths=['./fhelipe.png','./photos/fhelipe.png','./fhelipe.jpg','./photos/fhelipe.jpg'];
     let idx=0;
     bImg.onerror=function(){idx++;if(idx<paths.length){bImg.src=paths[idx];}};
     bImg.src=paths[0];
   }
+
+  // Razor SVG — scale + fade in on scroll
   const rw=document.getElementById('straight-razor-wrap');
   if(rw){
     rw.addEventListener('click',()=>rw.classList.add('open'));
-    ScrollTrigger.create({trigger:rw,start:'top 62%',once:true,onEnter(){rw.classList.add('open');}});
+    gsap.fromTo('#straight-razor-svg',
+      {opacity:0,scale:.88,transformOrigin:'center center'},
+      {opacity:1,scale:1,duration:1.2,ease:'power3.out',
+       scrollTrigger:{trigger:rw,start:'top 72%',once:true}});
+    ScrollTrigger.create({trigger:rw,start:'top 60%',once:true,
+      onEnter(){rw.classList.add('open');}});
   }
-  gsap.to('#bPhoto img',{yPercent:10,ease:'none',scrollTrigger:{trigger:'#barber',start:'top bottom',end:'bottom top',scrub:1.5}});
-  document.querySelectorAll('.gc').forEach(el=>{
-    gsap.fromTo(el,{clipPath:'inset(0 100% 0 0)'},{clipPath:'inset(0 0% 0 0)',duration:1.1,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 88%',once:true}});
+
+  // Barber parallax
+  gsap.to('#bPhoto img',{yPercent:10,ease:'none',
+    scrollTrigger:{trigger:'#barber',start:'top bottom',end:'bottom top',scrub:1.5}});
+
+  // ── GSAP ScrollTrigger reveals ────────────────────────
+  // Clip reveals (headings)
+  document.querySelectorAll('.gc,.reveal-clip').forEach(el=>{
+    gsap.fromTo(el,
+      {clipPath:'inset(0 100% 0 0)'},
+      {clipPath:'inset(0 0% 0 0)',duration:1.1,ease:'power3.out',
+       scrollTrigger:{trigger:el,start:'top 88%',once:true}});
   });
+
+  // Fade-up reveals
   document.querySelectorAll('.g0').forEach(el=>{
     const d=parseFloat(getComputedStyle(el).getPropertyValue('--d')||'0');
-    gsap.fromTo(el,{opacity:0,y:28},{opacity:1,y:0,duration:.8,ease:'power3.out',delay:d,scrollTrigger:{trigger:el,start:'top 88%',once:true}});
+    gsap.fromTo(el,
+      {opacity:0,y:36},
+      {opacity:1,y:0,duration:.85,ease:'power3.out',delay:d,
+       scrollTrigger:{trigger:el,start:'top 88%',once:true}});
   });
+
+  // Slide-left reveals
   document.querySelectorAll('.g0l').forEach(el=>{
     const d=parseFloat(getComputedStyle(el).getPropertyValue('--d')||'0');
-    gsap.fromTo(el,{opacity:0,x:-22},{opacity:1,x:0,duration:.7,ease:'power3.out',delay:d,scrollTrigger:{trigger:el,start:'top 90%',once:true}});
+    gsap.fromTo(el,
+      {opacity:0,x:-28},
+      {opacity:1,x:0,duration:.8,ease:'power3.out',delay:d,
+       scrollTrigger:{trigger:el,start:'top 90%',once:true}});
   });
-  document.querySelectorAll('.val-col').forEach(col=>{
-    ScrollTrigger.create({trigger:col,start:'top 84%',once:true,onEnter(){col.classList.add('on');}});
+
+  // CSS-class-based reveal (Intersection Observer for .reveal-* classes)
+  const revealObs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');revealObs.unobserve(e.target);}});
+  },{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.reveal-up,.reveal-left,.reveal-right,.reveal-scale,.reveal-clip:not(.gc)').forEach(el=>revealObs.observe(el));
+
+  // Razor attr buttons stagger
+  document.querySelectorAll('.rui-attr').forEach((el,i)=>{
+    gsap.fromTo(el,
+      {opacity:0,y:22,x:-10},
+      {opacity:1,y:0,x:0,duration:.65,ease:'power3.out',
+       scrollTrigger:{trigger:el,start:'top 90%',once:true},delay:i*.08});
   });
+
+  // rui-book-btn
+  gsap.fromTo('.rui-book-btn',
+    {opacity:0,y:20},
+    {opacity:1,y:0,duration:.7,ease:'power3.out',
+     scrollTrigger:{trigger:'.rui-book-btn',start:'top 90%',once:true},delay:.35});
+
+  // Barber section — name swoops in, photo parallax already set
+  gsap.fromTo('.b-name',
+    {opacity:0,x:-50,skewX:-3},
+    {opacity:1,x:0,skewX:0,duration:1,ease:'power4.out',
+     scrollTrigger:{trigger:'.b-name',start:'top 85%',once:true}});
+
+  // Service rows — stagger slide left
+  document.querySelectorAll('.svc-row').forEach((el,i)=>{
+    gsap.fromTo(el,
+      {opacity:0,x:-32},
+      {opacity:1,x:0,duration:.6,ease:'power3.out',
+       scrollTrigger:{trigger:el,start:'top 92%',once:true},delay:i*.055});
+  });
+
+  // Review cards — stagger scale up
+  document.querySelectorAll('.prf-card').forEach((el,i)=>{
+    gsap.fromTo(el,
+      {opacity:0,y:32,scale:.97},
+      {opacity:1,y:0,scale:1,duration:.75,ease:'power3.out',
+       scrollTrigger:{trigger:el,start:'top 88%',once:true},delay:i*.1});
+  });
+
+  // Value bars
+  document.querySelectorAll('.val-col').forEach((col,i)=>{
+    gsap.fromTo(col,
+      {opacity:0,y:28},
+      {opacity:1,y:0,duration:.75,ease:'power3.out',
+       scrollTrigger:{trigger:col,start:'top 84%',once:true},delay:i*.12});
+    ScrollTrigger.create({trigger:col,start:'top 84%',once:true,
+      onEnter(){col.classList.add('on');}});
+  });
+
+  // Location map — slide right
+  gsap.fromTo('.map-box',
+    {opacity:0,x:40},
+    {opacity:1,x:0,duration:.9,ease:'power3.out',
+     scrollTrigger:{trigger:'.map-box',start:'top 85%',once:true}});
+
+  // Members section
+  gsap.fromTo('.mem-h2',
+    {opacity:0,y:40},
+    {opacity:1,y:0,duration:.9,ease:'power3.out',
+     scrollTrigger:{trigger:'.mem-h2',start:'top 85%',once:true}});
+
+  // Counters
   document.querySelectorAll('.cnt').forEach(el=>{
     const to=parseFloat(el.dataset.to),dec=parseInt(el.dataset.dec);
     ScrollTrigger.create({trigger:el,start:'top 85%',once:true,
-      onEnter(){gsap.to({v:0},{v:to,duration:1.6,ease:'power2.out',onUpdate(){el.textContent=this.targets()[0].v.toFixed(dec);}});}});
+      onEnter(){gsap.to({v:0},{v:to,duration:1.8,ease:'power2.out',
+        onUpdate(){el.textContent=this.targets()[0].v.toFixed(dec);}});}});
   });
+
+  // Magnetic buttons (desktop only)
   if(window.matchMedia('(pointer:fine)').matches){
     document.querySelectorAll('.n-book,.btn-g,.btn-t,.rui-book-btn').forEach(btn=>{
-      btn.addEventListener('mousemove',e=>{const r=btn.getBoundingClientRect();gsap.to(btn,{x:(e.clientX-(r.left+r.width/2))*.2,y:(e.clientY-(r.top+r.height/2))*.2,duration:.4,ease:'power2.out'});});
-      btn.addEventListener('mouseleave',()=>gsap.to(btn,{x:0,y:0,duration:.55,ease:'elastic.out(1,.5)'}));
+      btn.addEventListener('mousemove',e=>{
+        const r=btn.getBoundingClientRect();
+        gsap.to(btn,{x:(e.clientX-(r.left+r.width/2))*.22,y:(e.clientY-(r.top+r.height/2))*.22,duration:.4,ease:'power2.out'});
+      });
+      btn.addEventListener('mouseleave',()=>gsap.to(btn,{x:0,y:0,duration:.6,ease:'elastic.out(1,.4)'}));
     });
   }
+
+  // Video fallback
   const vid=document.getElementById('herovid');
-  if(vid){vid.addEventListener('error',()=>{vid.style.display='none';const img=document.createElement('img');img.src='./photos/fhelipe.png';img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.55) contrast(1.1) saturate(.7);';vid.parentNode.insertBefore(img,vid);});}
+  if(vid){vid.addEventListener('error',()=>{
+    vid.style.display='none';
+    const img=document.createElement('img');
+    img.src='./fhelipe.png';
+    img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.55) contrast(1.1) saturate(.7);';
+    vid.parentNode.insertBefore(img,vid);
+  });}
 });
 </script>
 </body>
