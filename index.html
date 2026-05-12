@@ -456,7 +456,7 @@ footer{padding:52px 52px 32px;border-top:.5px solid var(--border);}
 </section>
 <div id="barber">
   <div class="b-photo" id="bPhoto">
-    <img src="./fhelipe.png" alt="Fhelipe Antolin -- Master Barber" onerror="this.onerror=null;this.src='./photos/fhelipe.png'">
+    <img src="./fhelipe.jpg" alt="Fhelipe Antolin -- Master Barber" onerror="this.onerror=null;this.src='./photos/fhelipe.png'">
     <div class="b-photo-grad"></div>
   </div>
   <div class="b-info">
@@ -1064,118 +1064,13 @@ if(window.matchMedia('(pointer:fine)').matches){
   },{threshold:.15});
   svcObs.observe(svc);
 })();
-  blade.innerHTML=`<svg viewBox="0 0 860 80" xmlns="http://www.w3.org/2000/svg" overflow="visible">
-    <defs>
-      <linearGradient id="hbG" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#4a3818"/>
-        <stop offset="25%" stop-color="#C9A84C"/>
-        <stop offset="48%" stop-color="#f5e4a0"/>
-        <stop offset="52%" stop-color="#ffffff" stop-opacity=".9"/>
-        <stop offset="75%" stop-color="#C9A84C"/>
-        <stop offset="100%" stop-color="#4a3818"/>
-      </linearGradient>
-      <filter id="hbGlow"><feGaussianBlur stdDeviation="4" result="b"/>
-        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    </defs>
-    <!-- Blade body -->
-    <path d="M30 22 L700 16 Q718 15 720 22 L720 58 Q718 65 700 64 L30 58Z"
-          fill="url(#hbG)" stroke="rgba(201,168,76,.5)" stroke-width=".8" filter="url(#hbGlow)"/>
-    <!-- Edge shimmer -->
-    <line x1="30" y1="55" x2="698" y2="61" stroke="rgba(255,255,255,.8)" stroke-width="1.5"/>
-    <line x1="30" y1="52" x2="698" y2="58" stroke="rgba(255,248,220,.4)" stroke-width=".7"/>
-    <!-- Tip -->
-    <path d="M30 22 Q10 32 8 40 Q10 48 30 58" fill="rgba(201,168,76,.15)" stroke="rgba(201,168,76,.6)" stroke-width=".8"/>
-    <!-- Spine top -->
-    <line x1="30" y1="22" x2="700" y2="16" stroke="rgba(201,168,76,.9)" stroke-width="2.5"/>
-    <!-- Handle -->
-    <rect x="728" y="18" width="122" height="44" rx="7"
-          fill="#1a1208" stroke="rgba(201,168,76,.6)" stroke-width=".9"/>
-    <line x1="750" y1="27" x2="750" y2="51" stroke="rgba(201,168,76,.3)" stroke-width=".8"/>
-    <line x1="768" y1="27" x2="768" y2="51" stroke="rgba(201,168,76,.25)" stroke-width=".7"/>
-    <line x1="786" y1="27" x2="786" y2="51" stroke="rgba(201,168,76,.2)" stroke-width=".7"/>
-    <line x1="820" y1="27" x2="820" y2="51" stroke="rgba(201,168,76,.2)" stroke-width=".7"/>
-    <!-- Pivot -->
-    <circle cx="723" cy="40" r="7" fill="rgba(201,168,76,.08)" stroke="rgba(201,168,76,.65)" stroke-width=".8"/>
-    <circle cx="723" cy="40" r="2.5" fill="rgba(201,168,76,.5)"/>
-  </svg>`;
-  blade.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-150vw,-50%);width:min(860px,90vw);z-index:10;pointer-events:none;will-change:transform;';
-  hero.appendChild(blade);
-
-  // Spark line
-  const spark=document.createElement('div');
-  spark.id='hs-spark';
-  spark.style.cssText='position:absolute;top:50%;left:0;right:0;height:1px;transform:translateY(-50%) scaleX(0);transform-origin:center;background:linear-gradient(to right,transparent,rgba(255,255,255,.95) 20%,white 50%,rgba(255,255,255,.95) 80%,transparent);box-shadow:0 0 6px 1px rgba(255,255,255,.7),0 0 18px 2px rgba(201,168,76,.5);z-index:11;pointer-events:none;';
-  hero.appendChild(spark);
-
-  // Video clip containers (top/bottom halves)
-  const vid=document.getElementById('herovid');
-  const overlay=hero.querySelector('.hero-vid-overlay');
-
-  let triggered=false;
-  const heroObs=new IntersectionObserver(entries=>{
-    if(!entries[0].isIntersecting||triggered) return;
-    // Don't trigger on load — wait for scroll
-  },{threshold:.5});
-  heroObs.observe(hero);
-
-  // ScrollTrigger for razor split
-  ScrollTrigger.create({
-    trigger: hero,
-    start: 'top top',
-    end: 'bottom top',
-    scrub: 1,
-    onUpdate(self){
-      const p=self.progress;
-
-      // 0-20%: blade flies in
-      if(p<.2){
-        const t=p/.2;
-        const x=(-150+150*easeOut(t));
-        blade.style.transform=`translate(calc(-50% + ${x}vw), -50%) rotate(${(1-t)*-1}deg)`;
-      }
-
-      // 20-35%: blade impact + spark
-      if(p>=.18&&p<.38){
-        blade.style.transform='translate(-50%,-50%) rotate(0deg)';
-        const sp=Math.min(1,(p-.18)/.08);
-        spark.style.transform=`translateY(-50%) scaleX(${sp})`;
-        spark.style.opacity=p<.28?'1':String(Math.max(0,1-(p-.28)/.1));
-      }
-
-      // 35-70%: video splits
-      if(p>=.33){
-        const split=Math.min(55, (p-.33)/.37*55);
-        if(vid) vid.style.clipPath=`inset(0 0 ${split}% 0)`;
-        // Mirror bottom
-        const vidBot=hero.querySelector('.hs-vid-bot');
-        if(vidBot) vidBot.style.clipPath=`inset(${100-split}% 0 0 0)`;
-      }
-
-      // 70%+: blade fades
-      if(p>=.65){
-        blade.style.opacity=String(Math.max(0,1-(p-.65)/.15));
-      }
-    }
-  });
-
-  // Clone video for bottom half
-  const vidBot=vid.cloneNode(true);
-  vidBot.id='herovid-bot';
-  vidBot.className='hs-vid-bot';
-  vidBot.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.55) contrast(1.1) saturate(.7);clip-path:inset(100% 0 0 0);';
-  hero.insertBefore(vidBot,hero.firstChild);
-  vidBot.muted=true; vidBot.autoplay=true; vidBot.loop=true; vidBot.playsInline=true;
-  vidBot.play().catch(()=>{});
-
-  function easeOut(t){return 1-Math.pow(1-t,3);}
-})();
 
 // Video fallback
 const vid2=document.getElementById('herovid');
 if(vid2){vid2.addEventListener('error',()=>{
   vid2.style.display='none';
   const img=document.createElement('img');
-  img.src='./fhelipe.png';
+  img.src='./fhelipe.jpg';
   img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.55) contrast(1.1) saturate(.7);';
   vid2.parentNode.insertBefore(img,vid2);
 });}
