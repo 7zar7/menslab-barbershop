@@ -423,6 +423,99 @@ footer{padding:60px 52px 36px;border-top:.5px solid var(--border);}
   font-family:'JetBrains Mono',monospace;
   font-size:9px;letter-spacing:.42em;color:var(--gold);
   text-transform:uppercase;}
+
+/* ══ RAZOR UI SECTION ═══════════════════════════════════════ */
+#razor-ui-section{
+  background:var(--bg);
+  border-top:.5px solid var(--border);
+}
+#razor-ui-wrap{
+  padding:60px 52px 40px;
+  display:flex;flex-direction:column;align-items:center;
+}
+#razor-ui-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:.42em;color:var(--gold);
+  text-transform:uppercase;margin-bottom:40px;
+}
+#razor-ui-stage{
+  position:relative;
+  width:min(600px,90vw);
+  cursor:pointer;
+}
+#razor-ui-svg{width:100%;display:block;}
+
+/* Blade open state */
+#razor-ui-stage.razor-open #rui-blade{
+  transform:rotate(0deg) !important;
+}
+#razor-ui-stage.razor-open #rui-hotspots{
+  opacity:1 !important;
+}
+#razor-ui-stage.razor-open #rui-tap-hint{
+  opacity:0;
+}
+#razor-ui-stage.razor-open .rui-btn{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* Hotspot buttons */
+.rui-btn{
+  position:absolute;
+  font-family:'Syne',sans-serif;font-weight:700;
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold);text-decoration:none;
+  display:flex;align-items:center;gap:6px;
+  opacity:0;transform:translateY(8px);
+  transition:opacity .4s,transform .4s;
+  white-space:nowrap;
+}
+.rui-btn:hover{color:var(--cream);}
+.rui-btn-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--gold);flex-shrink:0;
+}
+#rui-btn-book{transition-delay:.8s;}
+#rui-btn-svc{transition-delay:.95s;}
+#rui-btn-loc{transition-delay:1.1s;}
+
+#rui-tap-hint{
+  position:absolute;bottom:-40px;left:50%;
+  transform:translateX(-50%);
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;letter-spacing:.3em;color:rgba(201,168,76,.4);
+  text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;
+  transition:opacity .4s;
+  animation:pulse 2s ease-in-out infinite;
+}
+
+/* Barber below razor */
+#barber-below{
+  display:grid;grid-template-columns:1fr 1fr;
+  align-items:stretch;border-top:.5px solid var(--border);
+}
+.barber-photo-wrap{
+  position:relative;overflow:hidden;min-height:580px;
+}
+.barber-photo-wrap img{
+  width:100%;height:100%;object-fit:cover;
+  object-position:center top;
+  filter:brightness(.78) contrast(1.05) saturate(.88);
+}
+.barber-info-wrap{
+  padding:80px 52px 80px 44px;
+  display:flex;flex-direction:column;justify-content:center;
+  background:var(--bg);
+}
+
+@media(max-width:900px){
+  #razor-ui-wrap{padding:48px 22px 32px;}
+  #barber-below{grid-template-columns:1fr;}
+  .barber-photo-wrap{min-height:60vw;}
+  .barber-info-wrap{padding:44px 22px;}
+}
 </style>
 </head>
 <body>
@@ -593,7 +686,7 @@ footer{padding:60px 52px 36px;border-top:.5px solid var(--border);}
 <!-- ══ BARBER ════════════════════════════════════════════════ -->
 <div id="barber">
   <div class="b-photo" id="bPhoto">
-    <img src="./fhelipe2.jpg" alt="Fhelipe Antolin — Master Barber" crossorigin="anonymous" onerror="this.onerror=null;this.src='./fhelipe.jpg'">
+    <img src="./fhelipe.png" alt="Fhelipe Antolin — Master Barber" crossorigin="anonymous" onerror="this.onerror=null;this.src='./fhelipe.png'">
     <div class="b-photo-grad"></div>
   </div>
   <div class="b-info">
@@ -968,6 +1061,23 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   });
 
+  
+  /* ── RAZOR UI OPEN ON SCROLL ───────────────────────── */
+  const razorStage = document.getElementById('razor-ui-stage');
+  if(razorStage){
+    // Also open on click
+    razorStage.addEventListener('click', () => {
+      razorStage.classList.add('razor-open');
+    });
+    // Open on scroll into view
+    ScrollTrigger.create({
+      trigger: razorStage,
+      start: 'top 65%',
+      once: true,
+      onEnter(){ razorStage.classList.add('razor-open'); }
+    });
+  }
+
   /* ── MAGNETIC BUTTONS ──────────────────────────────── */
   document.querySelectorAll('.n-book,.btn-g,.btn-t').forEach(btn=>{
     btn.addEventListener('mousemove',e=>{
@@ -987,7 +1097,7 @@ document.addEventListener('DOMContentLoaded', function(){
     vid.addEventListener('error',()=>{
       vid.style.display='none';
       const img=document.createElement('img');
-      img.src='./fhelipe.jpg';
+      img.src='./fhelipe.png';
       img.style.cssText='width:100%;height:100%;object-fit:cover;filter:brightness(.55) contrast(1.1) saturate(.7);';
       vid.parentNode.insertBefore(img,vid);
     });
