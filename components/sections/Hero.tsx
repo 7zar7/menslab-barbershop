@@ -6,7 +6,7 @@ import Button from "@/components/Button";
 import HeroGrid from "@/components/HeroGrid";
 import Marquee from "@/components/Marquee";
 import TerminalPrompt from "@/components/TerminalPrompt";
-import TextScramble from "@/components/TextScramble";
+import WordReveal from "@/components/WordReveal";
 
 const PROOF = [
   "243 leads",
@@ -31,7 +31,14 @@ export default function Hero() {
         <TerminalPrompt />
 
         <h1 className="heading-xl mt-7 text-balance text-text-primary">
-          <TextScramble text="Your site is losing you investors." />
+          <WordReveal
+            text="Your site is losing you investors."
+            trigger="mount"
+            y={8}
+            duration={0.4}
+            stagger={0.06}
+            delay={0.3}
+          />
         </h1>
 
         <motion.p

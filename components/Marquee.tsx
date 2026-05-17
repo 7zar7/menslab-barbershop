@@ -12,9 +12,9 @@ export default function Marquee({ items }: { items: string[] }) {
       className="relative w-full overflow-hidden"
       style={{
         maskImage:
-          "linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent)",
+          "linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%)",
         WebkitMaskImage:
-          "linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent)",
+          "linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%)",
       }}
     >
       <div className="flex w-max animate-marquee will-change-transform">
