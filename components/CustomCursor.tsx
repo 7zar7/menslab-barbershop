@@ -3,8 +3,11 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Magnetic cursor: a 12px accent dot that lerp-follows the pointer and
- * expands to a 40px border-only ring over interactive elements.
+ * Global custom cursor — single rAF loop for the whole page.
+ *   default: 10px ring, 1px solid accent, transparent fill, opacity 0.8
+ *   hover:   36px ring, faint accent fill, 150ms ease
+ *   click:   quick spring to 0.7 and back
+ * Native pointer is suppressed via `body.has-custom-cursor` (globals.css).
  * Disabled on touch / coarse pointers and under prefers-reduced-motion.
  */
 export default function CustomCursor() {
@@ -24,17 +27,20 @@ export default function CustomCursor() {
     let hovering = false;
     let visible = false;
     let pressed = false;
+    let scaleCur = 1;
 
     const isInteractive = (n: EventTarget | null) =>
       n instanceof Element &&
-      !!n.closest('a, button, [role="button"], input, textarea, select, label, [data-cursor="hover"]');
+      !!n.closest(
+        'a, button, [role="button"], input, textarea, select, label, [data-cursor="hover"]'
+      );
 
     const onMove = (e: PointerEvent) => {
       target.x = e.clientX;
       target.y = e.clientY;
       if (!visible) {
         visible = true;
-        el.style.opacity = "0.9";
+        el.style.opacity = "0.8";
       }
       hovering = isInteractive(e.target);
     };
@@ -50,17 +56,21 @@ export default function CustomCursor() {
     };
 
     const tick = () => {
-      current.x += (target.x - current.x) * 0.18;
-      current.y += (target.y - current.y) * 0.18;
-      const size = hovering ? 40 : 12;
-      const scale = pressed ? 0.85 : 1;
-      el.style.transform = `translate3d(${current.x - size / 2}px, ${
-        current.y - size / 2
-      }px, 0) scale(${scale})`;
+      current.x += (target.x - current.x) * 0.12;
+      current.y += (target.y - current.y) * 0.12;
+
+      const scaleTarget = pressed ? 0.7 : 1;
+      scaleCur += (scaleTarget - scaleCur) * 0.35;
+
+      const size = hovering ? 36 : 10;
       el.style.width = `${size}px`;
       el.style.height = `${size}px`;
-      el.style.backgroundColor = hovering ? "transparent" : "var(--accent)";
-      el.style.borderColor = hovering ? "var(--accent)" : "transparent";
+      el.style.backgroundColor = hovering
+        ? "rgba(0,229,255,0.06)"
+        : "transparent";
+      el.style.transform = `translate3d(${current.x - size / 2}px, ${
+        current.y - size / 2
+      }px, 0) scale(${scaleCur})`;
       raf = requestAnimationFrame(tick);
     };
 
@@ -84,8 +94,14 @@ export default function CustomCursor() {
     <div
       ref={dotRef}
       aria-hidden
-      className="pointer-events-none fixed left-0 top-0 z-[9999] rounded-full border opacity-0 mix-blend-difference transition-[width,height,background-color] duration-200 ease-out"
-      style={{ width: 12, height: 12, willChange: "transform" }}
+      className="pointer-events-none fixed left-0 top-0 z-[9999] rounded-full border opacity-0 transition-[width,height,background-color] duration-150"
+      style={{
+        width: 10,
+        height: 10,
+        borderColor: "#00E5FF",
+        transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
+        willChange: "transform",
+      }}
     />
   );
 }
