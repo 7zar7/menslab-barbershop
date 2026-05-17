@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Analytics from "@/components/Analytics";
+import GrainOverlay from "@/components/GrainOverlay";
+import GridBackground from "@/components/GridBackground";
 import { siteConfig } from "@/lib/siteConfig";
 import "./globals.css";
 
@@ -57,7 +59,9 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased bg-void text-text-primary">
+        <GridBackground />
         {children}
+        <GrainOverlay />
         <Analytics />
       </body>
     </html>
