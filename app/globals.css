@@ -108,6 +108,50 @@
   }
 }
 
+/* ── Signature dot grid ──────────────────────────────────────────
+   Graph-paper texture behind every section. Near-invisible, slow
+   drift. Fades toward the edges so it never competes with content. */
+.dot-grid {
+  background-image: radial-gradient(
+    rgba(226, 232, 240, 0.05) 1px,
+    transparent 1px
+  );
+  background-size: 26px 26px;
+  background-position: 0 0;
+  -webkit-mask-image: radial-gradient(
+    ellipse 80% 70% at 50% 45%,
+    #000 60%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 80% 70% at 50% 45%,
+    #000 60%,
+    transparent 100%
+  );
+  animation: grid-pan 24s linear infinite;
+  will-change: background-position;
+}
+
+@keyframes grid-pan {
+  to {
+    background-position: 26px 26px;
+  }
+}
+
+/* Terminal caret — blinks on a 1s interval. */
+.cursor-blink {
+  animation: caret-blink 1s step-end infinite;
+}
+@keyframes caret-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
 /* Accessibility: honor reduced-motion globally. */
 @media (prefers-reduced-motion: reduce) {
   *,

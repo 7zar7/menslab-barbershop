@@ -3,10 +3,10 @@
 import { motion } from "framer-motion";
 import BookCall from "@/components/BookCall";
 import Button from "@/components/Button";
+import HeroGrid from "@/components/HeroGrid";
 import Marquee from "@/components/Marquee";
-import ParticleField from "@/components/ParticleField";
+import TerminalPrompt from "@/components/TerminalPrompt";
 import TextScramble from "@/components/TextScramble";
-import { siteConfig } from "@/lib/siteConfig";
 
 const PROOF = [
   "243 leads",
@@ -25,17 +25,10 @@ export default function Hero() {
       id="top"
       className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-28 pt-24"
     >
-      <ParticleField />
+      <HeroGrid />
 
       <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center text-center">
-        <motion.p
-          className="section-label"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: EASE, delay: 0.1 }}
-        >
-          Strategy + Execution · Est. {siteConfig.established}
-        </motion.p>
+        <TerminalPrompt />
 
         <h1 className="heading-xl mt-7 text-balance text-text-primary">
           <TextScramble text="Your site is losing you investors." />
