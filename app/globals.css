@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-inter: "Inter", system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-jetbrains: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo,
+    Consolas, "Liberation Mono", monospace;
+
+  --bg-void: #0a0e12;
+  --bg-surface: #111823;
+  --bg-elevated: #161d2b;
+  --border-default: #1e2d3d;
+  --border-active: #26354a;
+  --accent: #00e5ff;
+  --accent-dim: #00e5ff20;
+  --text-primary: #e2e8f0;
+  --text-secondary: #64748b;
+  --text-muted: #334155;
+  --success: #00d68f;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--bg-void);
+    color: var(--text-primary);
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  ::selection {
+    background: var(--accent-dim);
+    color: var(--text-primary);
+  }
+
+  /* Hide native cursor only on devices with a precise pointer (custom cursor active). */
+  @media (hover: hover) and (pointer: fine) {
+    body.has-custom-cursor,
+    body.has-custom-cursor * {
+      cursor: none;
+    }
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg-void);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-default);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--border-active);
+  }
+}
+
+@layer components {
+  /* THE GLASS PROCESSOR — every card is a pane of semiconductor glass. */
+  .glass {
+    position: relative;
+    background: rgba(17, 24, 35, 0.8);
+    border: 1px solid var(--border-default);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    transition: border-color 200ms ease-out, box-shadow 200ms ease-out,
+      transform 200ms ease-out;
+  }
+
+  .glass:hover {
+    border-color: var(--border-active);
+    box-shadow: inset 0 0 0 1px #00e5ff15;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .heading-xl {
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+    font-size: clamp(48px, 8vw, 96px);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .will-change-transform-opacity {
+    will-change: transform, opacity;
+  }
+}
+
+/* Accessibility: honor reduced-motion globally. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
