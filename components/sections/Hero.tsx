@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import BookCall from "@/components/BookCall";
 import Button from "@/components/Button";
 import HeroGrid from "@/components/HeroGrid";
@@ -20,6 +21,33 @@ const PROOF = [
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 export default function Hero() {
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const [exiting, setExiting] = useState(false);
+  const [zEnabled, setZEnabled] = useState(false);
+
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 768px)").matches;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (!desktop || reduced) return;
+    setZEnabled(true);
+
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    // Sentinel sits at 80% of the hero. Once it crosses above the
+    // viewport top, the user is "flying into" the next section.
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        setExiting(!entry.isIntersecting && entry.boundingClientRect.top < 0);
+      },
+      { threshold: 0 }
+    );
+    io.observe(sentinel);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <section
       id="top"
@@ -27,7 +55,24 @@ export default function Hero() {
     >
       <HeroGrid />
 
-      <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center text-center">
+      {/* 80%-depth trigger for the Z-axis transition. */}
+      <div
+        ref={sentinelRef}
+        aria-hidden
+        className="pointer-events-none absolute left-0 right-0"
+        style={{ top: "80%", height: 1 }}
+      />
+
+      <motion.div
+        className="relative z-10 mx-auto flex max-w-3xl flex-col items-center text-center"
+        animate={
+          zEnabled && exiting
+            ? { scale: 1.08, opacity: 0, filter: "blur(4px)" }
+            : { scale: 1, opacity: 1, filter: "blur(0px)" }
+        }
+        transition={{ duration: 0.5, ease: "easeIn" }}
+        style={{ willChange: "transform, opacity, filter" }}
+      >
         <TerminalPrompt />
 
         <h1 className="heading-xl mt-7 text-balance text-text-primary">
@@ -63,13 +108,13 @@ export default function Hero() {
           </Button>
           <BookCall variant="ghost" />
         </motion.div>
-      </div>
+      </motion.div>
 
       <motion.div
         className="absolute inset-x-0 bottom-8 z-10"
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 1.3 }}
+        animate={{ opacity: exiting ? 0 : 1 }}
+        transition={{ duration: 0.5, ease: "easeIn" }}
       >
         <Marquee items={PROOF} />
       </motion.div>

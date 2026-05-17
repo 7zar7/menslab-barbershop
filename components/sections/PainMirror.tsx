@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, type Variants } from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -27,8 +27,16 @@ const line: Variants = {
 };
 
 export default function PainMirror() {
+  const reduced = useReducedMotion() ?? false;
   return (
-    <section className="relative px-6 py-40 sm:py-56">
+    <motion.section
+      className="relative px-6 py-40 sm:py-56"
+      initial={{ opacity: 0, scale: reduced ? 1 : 0.96 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true, amount: 0.05 }}
+      transition={{ duration: 0.6, ease: EASE }}
+      style={{ willChange: "transform, opacity" }}
+    >
       <motion.div
         className="mx-auto max-w-4xl"
         variants={container}
@@ -59,6 +67,6 @@ export default function PainMirror() {
           </p>
         </motion.div>
       </motion.div>
-    </section>
+    </motion.section>
   );
 }
