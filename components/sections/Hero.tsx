@@ -33,22 +33,16 @@ export default function Hero() {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
 
-    // Sentinel sits high in the hero (~22%). At the spec's literal
-    // "80% depth" the centred hero text has already scrolled off the
-    // top, so the fly-away animates off-screen and is only seen when
-    // scrolling back UP. Triggering while the text is still on-screen
-    // makes the downward "fly into the content" motion actually visible.
-    // IntersectionObserver fires in BOTH scroll directions.
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        setExiting(
-          !entry.isIntersecting && entry.boundingClientRect.top < 0
-        );
-      },
-      { threshold: 0 }
-    );
-    io.observe(sentinel);
-    return () => io.disconnect();
+    // Scroll listener instead of IntersectionObserver — the hero's
+    // overflow:hidden clips IO intersection calculation, causing it to
+    // miss the downward-scroll trigger. getBoundingClientRect is always
+    // accurate regardless of ancestor overflow.
+    const onScroll = () => {
+      setExiting(sentinel.getBoundingClientRect().top < 0);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const flyAway = zEnabled && exiting;

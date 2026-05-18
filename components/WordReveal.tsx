@@ -32,7 +32,7 @@ export default function WordReveal({
   delay?: number;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const [run, setRun] = useState(trigger === "mount");
+  const [run, setRun] = useState(false);
 
   useEffect(() => {
     if (trigger === "mount") {

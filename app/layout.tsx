@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Analytics from "@/components/Analytics";
+import CustomCursor from "@/components/CustomCursor";
 import GrainOverlay from "@/components/GrainOverlay";
 import GridBackground from "@/components/GridBackground";
 import { siteConfig } from "@/lib/siteConfig";
@@ -62,6 +63,7 @@ export default function RootLayout({
         <GridBackground />
         {children}
         <GrainOverlay />
+        <CustomCursor />
         <Analytics />
       </body>
     </html>
