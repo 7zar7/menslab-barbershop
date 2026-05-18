@@ -1,13 +1,16 @@
 "use client";
 
-import { motion, useReducedMotion, type Variants } from "framer-motion";
-
-const EASE = [0.16, 1, 0.3, 1] as const;
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 
 /**
  * Resolves text one word at a time — each word rises and fades in, like a
- * compiler emitting tokens. No bounce. Used by the hero (trigger: mount)
- * and Pain Mirror (trigger: inView).
+ * compiler emitting tokens. No bounce.
+ *
+ * Pure CSS keyframe (see globals.css `.wr-run .wr-word`). The reveal runs
+ * as soon as the container gets `wr-run`:
+ *   - trigger="mount"  → armed on first client render
+ *   - trigger="inView" → armed by IntersectionObserver (once)
+ * Reduced-motion is handled globally (duration → 0, words snap visible).
  */
 export default function WordReveal({
   text,
@@ -28,57 +31,54 @@ export default function WordReveal({
   amount?: number;
   delay?: number;
 }) {
-  const reduced = useReducedMotion() ?? false;
+  const ref = useRef<HTMLSpanElement>(null);
+  const [run, setRun] = useState(trigger === "mount");
+
+  useEffect(() => {
+    if (trigger === "mount") {
+      setRun(true);
+      return;
+    }
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setRun(true);
+          io.disconnect();
+        }
+      },
+      { threshold: amount }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [trigger, amount]);
+
   const words = text.split(" ");
 
-  const container: Variants = {
-    hidden: {},
-    show: {
-      transition: {
-        staggerChildren: reduced ? 0 : stagger,
-        delayChildren: delay,
-      },
-    },
-  };
-  const word: Variants = {
-    hidden: { opacity: 0, y: reduced ? 0 : y },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: reduced ? 0 : duration, ease: EASE },
-    },
-  };
-
-  const animateProps =
-    trigger === "mount"
-      ? { animate: "show" as const }
-      : {
-          whileInView: "show" as const,
-          viewport: { once: true, amount },
-        };
-
   return (
-    <motion.span
-      className={className}
-      variants={container}
-      initial="hidden"
-      {...animateProps}
+    <span
+      ref={ref}
+      className={`${run ? "wr-run " : ""}${className ?? ""}`}
       aria-label={text}
     >
       {words.map((w, i) => (
         <span key={`${w}-${i}`} aria-hidden>
-          <motion.span
-            variants={word}
-            style={{
-              display: "inline-block",
-              willChange: "transform, opacity",
-            }}
+          <span
+            className="wr-word"
+            style={
+              {
+                "--wr-delay": `${delay + i * stagger}s`,
+                "--wr-dur": `${duration}s`,
+                "--wr-y": `${y}px`,
+              } as CSSProperties
+            }
           >
             {w}
-          </motion.span>
+          </span>
           {i < words.length - 1 ? " " : ""}
         </span>
       ))}
-    </motion.span>
+    </span>
   );
 }

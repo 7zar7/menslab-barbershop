@@ -138,6 +138,49 @@
   }
 }
 
+/* Word-by-word reveal — CSS-driven so it always fires (no JS animation
+   library timing to depend on). Reduced-motion zeroes the duration via
+   the global rule below, snapping each word straight to visible. */
+.wr-word {
+  display: inline-block;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.wr-run .wr-word {
+  animation: word-rise var(--wr-dur, 0.4s) cubic-bezier(0.16, 1, 0.3, 1)
+    both;
+  animation-delay: var(--wr-delay, 0s);
+}
+@keyframes word-rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--wr-y, 8px));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Generic block rise-in (hero subhead / CTAs). Same reduced-motion
+   behaviour as the word reveal. */
+.rise-in {
+  opacity: 0;
+  animation: rise-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--ri-delay, 0s);
+  will-change: transform, opacity;
+}
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Terminal caret — blinks on a 1s interval. */
 .cursor-blink {
   animation: caret-blink 1s step-end infinite;

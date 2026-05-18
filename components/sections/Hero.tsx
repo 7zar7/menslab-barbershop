@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import BookCall from "@/components/BookCall";
 import Button from "@/components/Button";
@@ -18,8 +17,6 @@ const PROOF = [
   "C-suite approved deliverables",
 ];
 
-const EASE = [0.16, 1, 0.3, 1] as const;
-
 export default function Hero() {
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [exiting, setExiting] = useState(false);
@@ -36,17 +33,25 @@ export default function Hero() {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
 
-    // Sentinel sits at 80% of the hero. Once it crosses above the
-    // viewport top, the user is "flying into" the next section.
+    // Sentinel sits high in the hero (~22%). At the spec's literal
+    // "80% depth" the centred hero text has already scrolled off the
+    // top, so the fly-away animates off-screen and is only seen when
+    // scrolling back UP. Triggering while the text is still on-screen
+    // makes the downward "fly into the content" motion actually visible.
+    // IntersectionObserver fires in BOTH scroll directions.
     const io = new IntersectionObserver(
       ([entry]) => {
-        setExiting(!entry.isIntersecting && entry.boundingClientRect.top < 0);
+        setExiting(
+          !entry.isIntersecting && entry.boundingClientRect.top < 0
+        );
       },
       { threshold: 0 }
     );
     io.observe(sentinel);
     return () => io.disconnect();
   }, []);
+
+  const flyAway = zEnabled && exiting;
 
   return (
     <section
@@ -55,23 +60,23 @@ export default function Hero() {
     >
       <HeroGrid />
 
-      {/* 80%-depth trigger for the Z-axis transition. */}
       <div
         ref={sentinelRef}
         aria-hidden
         className="pointer-events-none absolute left-0 right-0"
-        style={{ top: "80%", height: 1 }}
+        style={{ top: "22%", height: 1 }}
       />
 
-      <motion.div
+      <div
         className="relative z-10 mx-auto flex max-w-3xl flex-col items-center text-center"
-        animate={
-          zEnabled && exiting
-            ? { scale: 1.08, opacity: 0, filter: "blur(4px)" }
-            : { scale: 1, opacity: 1, filter: "blur(0px)" }
-        }
-        transition={{ duration: 0.5, ease: "easeIn" }}
-        style={{ willChange: "transform, opacity, filter" }}
+        style={{
+          transform: flyAway ? "scale(1.08)" : "scale(1)",
+          opacity: flyAway ? 0 : 1,
+          filter: flyAway ? "blur(4px)" : "blur(0px)",
+          transition:
+            "transform 500ms ease-in, opacity 500ms ease-in, filter 500ms ease-in",
+          willChange: "transform, opacity, filter",
+        }}
       >
         <TerminalPrompt />
 
@@ -86,38 +91,35 @@ export default function Hero() {
           />
         </h1>
 
-        <motion.p
-          className="mt-7 max-w-[480px] text-[18px] leading-relaxed text-text-secondary"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: EASE, delay: 0.9 }}
+        <p
+          className="rise-in mt-7 max-w-[480px] text-[18px] leading-relaxed text-text-secondary"
+          style={{ ["--ri-delay" as string]: "0.9s" }}
         >
           We combine M&amp;A-level strategic thinking with 2–5 day execution.
           For founders who can&apos;t afford to look like they&apos;re still
           figuring it out.
-        </motion.p>
+        </p>
 
-        <motion.div
-          className="mt-10 flex flex-col items-center gap-3 sm:flex-row"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: EASE, delay: 1.05 }}
+        <div
+          className="rise-in mt-10 flex flex-col items-center gap-3 sm:flex-row"
+          style={{ ["--ri-delay" as string]: "1.05s" }}
         >
           <Button variant="primary" href="#work">
             See our work
           </Button>
           <BookCall variant="ghost" />
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
-      <motion.div
+      <div
         className="absolute inset-x-0 bottom-8 z-10"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: exiting ? 0 : 1 }}
-        transition={{ duration: 0.5, ease: "easeIn" }}
+        style={{
+          opacity: flyAway ? 0 : 1,
+          transition: "opacity 500ms ease-in",
+        }}
       >
         <Marquee items={PROOF} />
-      </motion.div>
+      </div>
     </section>
   );
 }
